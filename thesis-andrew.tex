@@ -41,7 +41,7 @@
 \documentclass[ twoside,openright,titlepage,numbers=noenddot,headinclude,%1headlines,% letterpaper a4paper
                 footinclude=true,cleardoublepage=empty,abstractoff, % <--- obsolete, remove (todo)
                 BCOR=5mm,paper=a4,fontsize=11pt,%11pt,a4paper,%
-                ngerman,american,%
+                french,english,%
                 ]{scrreprt}
 
 %********************************************************************
@@ -60,7 +60,7 @@
 \begin{document}
 \frenchspacing
 \raggedbottom
-\selectlanguage{american} % american ngerman
+\selectlanguage{english} % american ngerman
 %\renewcommand*{\bibname}{new name}
 %\setbibpreamble{}
 \pagenumbering{roman}
@@ -68,13 +68,13 @@
 %********************************************************************
 % Frontmatter
 %*******************************************************
-\include{FrontBackmatter/DirtyTitlepage}
+%\include{FrontBackmatter/DirtyTitlepage}
 \include{FrontBackmatter/Titlepage}
-\include{FrontBackmatter/Titleback}
-\cleardoublepage\include{FrontBackmatter/Dedication}
+%\include{FrontBackmatter/Titleback}
+%\cleardoublepage\include{FrontBackmatter/Dedication}
 %\cleardoublepage\include{FrontBackmatter/Foreword}
 \cleardoublepage\include{FrontBackmatter/Abstract}
-\cleardoublepage\include{FrontBackmatter/Publication}
+%\cleardoublepage\include{FrontBackmatter/Publication}
 \cleardoublepage\include{FrontBackmatter/Acknowledgments}
 \pagestyle{scrheadings}
 \cleardoublepage\include{FrontBackmatter/Contents}

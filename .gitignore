@@ -5,3 +5,6 @@
 *.lol
 *.out
 *.toc
+*.bbl
+*.blg
+*.pdf
