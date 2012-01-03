@@ -1,0 +1,80 @@
+%************************************************
+\chapter{Performance tests}\label{ch:performance} % $\mathbb{ZNR}$
+%************************************************
+
+In this chapter, we describe what we want to test for, how we tested it, what we
+compared it to, and what the results were. Then a discussion of the results.
+
+\section{Parameters to test for}
+
+\begin{itemize}
+  \item \emph{Power Consumption} : a module must be able to survive on minimal
+    power. To determine whether this is possible, we have two concurrent
+    approaches : measure the minimum possible current consumption (in a sleep
+    state with a wake timer, as well as in deep sleep with a wake interrupt),
+    measure the current during a transmission and establish the connection
+    between transmission duty cycle and average current consumption. Using data
+    gathered from a month-long test using and indoor energy harvesting
+    datalogger, we can deduce the maximum duty cycle that can sustain the
+    device, which will then allow us to determine which application are suitable
+    for this kind of power source.
+  \item \emph{RF Power and Range} : Each revision of the PCB will be tested in
+    typical working conditions for transmission range and compared with the
+    reference designs. We will also take a measurement of the power received at
+    a given distance when transmitting a sine wave at various power settings and
+    frequencies.
+  \item \emph{RF Components} : Some components have a very high influence on the
+    total cost of the device. We shall test alternatives to the recommended
+    components to determine if we can lower the cost without compromising
+    performance.
+  \item \emph{<++>} : <++>
+\end{itemize}
+
+\section{Tests}
+
+Here we'll describe the tests and show the results
+
+\subsection{Current consumption}
+
+Show the measured current consumption in various modes, show the associated code
+to achieve that state, and compare with values from the datasheet.
+
+\subsubsection{Duty Cycle}
+
+Taking into account the time it takes to wake the RF part (take from datasheet
+since our scopes suck), derive a formula for the average consumption.
+
+\subsubsection{Energy Harvesting}
+
+Show a few plots of the harvesting results, give some average values for various
+situations, and give some duty cycle estimates.
+
+From this, give some concrete examples (i.e. for reading a temperature, it would
+take n microseconds to wake the device, take a reading, m millis to transmit,
+etc, since duty cycle is D, we can expect to transmit a temperature reading once
+every M minutes.)
+
+Propose some alternatives in case we want a higher sample rate : wake the device
+to a slow mode, without RF, log to EEPROM and then send 10 readings at a time.
+
+\subsection{RF Power}
+
+Illustrate the test setup, clearly indicate measuring distance. Test for various
+orientations.
+
+\subsection{RF Range}
+
+Take possibly the best performing device from the previous tests (hopefully the
+one with the ducky antenna), and then see how far I can get with the test
+modules in various situations. Perhaps test in a corridor with a double
+decameter.
+
+\subsection{RF Components}
+
+List recommended components and their BOM price. Compare those with some lower
+priced examples (and compare their datasheet specs, like insertion loss). Then
+replace those in a design and then run a power test on them, in similar
+operating conditions.
+
+
+

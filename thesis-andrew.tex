@@ -85,19 +85,31 @@
 %\setcounter{page}{90}
 % use \cleardoublepage here to avoid problems with pdfbookmark
 \cleardoublepage
-\part{Some Kind of Manual}
+\ctparttext{We will begin this thesis with a description of the project
+requirements which were given at the beginning. Although some of them have
+changed over time, they form the basis for the direction in which the design was
+taken.}
+\part{Requirements}
 \include{Chapters/Chapter01}
-\cleardoublepage
-\ctparttext{You can put some informational part preamble text here. 
-Illo principalmente su nos. Non message \emph{occidental} angloromanic
-da. Debitas effortio simplificate sia se, auxiliar summarios da que,
-se avantiate publicationes via. Pan in terra summarios, capital
-interlingua se que. Al via multo esser specimen, campo responder que
-da. Le usate medical addresses pro, europa origine sanctificate nos se.}
-\part{The Showcase}
 \include{Chapters/Chapter02}
-%\addtocontents{toc}{\protect\clearpage} % <--- just debug stuff, ignore
+\cleardoublepage
+\ctparttext{In this part, we will cover the hardware design of the devices.
+Design choices will be explained, differences between the revisions. Later in
+this part, we will show test results comparing the chosen design to the
+reference design as well as a separate student project. After this, we will
+review the performance, cost and suitability of this project and suggest some
+paths for improvement that could be explored in a future revision or for
+a simlar project.}
+\part{PCB Design}
+% Chapter 3 : version 1, version 2, etc.
 \include{Chapters/Chapter03}
+%\addtocontents{toc}{\protect\clearpage} % <--- just debug stuff, ignore
+
+% Chapter 4 : testing, results
+\include{Chapters/Chapter04}
+
+% Chapter 5 : future improvements
+\include{Chapters/Chapter05}
 %\include{multiToC} % <--- just debug stuff, ignore for your documents
 % ********************************************************************
 % Backmatter
