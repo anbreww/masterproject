@@ -35,8 +35,7 @@ this project. Each item will be examined fully in the rest of this document.
     that it has correctly received an instruction.
   \item \emph{Processing power} : the basic platform must be able to run some
     algorithms on live audio data, and therefore must be capable of calculating
-    a basic \ac{FFT} in real time.\marginpar{These specifications were first
-    aimed at a very specific example and then later generalized.}
+    a basic \ac{FFT} in real time.
   \item \emph{I/O} : each basic module should have some spare inputs and
     outputs which can be used to drive LEDs or relays (using \ac{PWM} if
     necessary) and gather input from switches or sensors.
@@ -46,6 +45,10 @@ this project. Each item will be examined fully in the rest of this document.
     application had not been clearly defined when the project requirements were
     drafted, this is quite a subjective requirement.}
 \end{itemize}
+
+
+Precision about power consumption : compare to a standard op amp which would be
+always powered on.
 
 The goal of this project is to evaluate the various wireless communication
 standards that are currently on the market, and produce a working proof of

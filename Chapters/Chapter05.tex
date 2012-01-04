@@ -9,7 +9,31 @@ Here we'll discuss some compromises that were made. Notably:
     the chip.
   \item Time constraints, needed to push through with the design, otherwise it
     would have been better to test various different antenna designs. 
-  \item Chosing a different chip : if the requirements had been a little
+  \item Choosing a different chip : if the requirements had been a little
     different, we could have chosen a different solution, which would have been
     cheaper, more powerful and/or more energy efficient.
 \end{itemize}
+
+\section{Design Issues}
+
+Talk about the design itself. Problem with this project is that it's only
+produced a proof of concept device. It would be more interesting to have a whole
+family of devices that can perform various functions, gather sensor data etc.
+
+If this project were to be developed further, the first step would be to create
+some add-on modules to be connected to the expansion port. This however is quite
+wasteful in space and monies (connectors are expensive, and the current choice
+is quite large). Ideally, once a device has been developed and tested
+satisfactorily, the add-on module should be incorporated onto one PCB with the
+transmitter and become a standalone module with one specific application.
+
+Also, note that this way of doing things (since we're using a SoC) is a little
+bit backwards from the way things tend to be done : the ``base unit'' is just
+a chip with an antenna, and we plug modules into it to add functionality.
+Usually, you would build a platform for one or more applications, and then strap
+the RF device to it to add RF functionality, not make it the core of the
+application.
+
+Of course, there's nothing to prevent us from doing that : i.e. developing
+a 6LoWPAN XBee clone (personal project for my future!) but it's probably going
+to be more expensive than necessary!
