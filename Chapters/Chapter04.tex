@@ -39,6 +39,14 @@ Here we'll describe the tests and show the results
 Show the measured current consumption in various modes, show the associated code
 to achieve that state, and compare with values from the datasheet.
 
+\begin{lstlisting}[language=C,caption=Example code for sleep mode A]
+  int main(void)
+  {
+    STlibSleep(SLEEP_MODE_BLAH);
+    sleep();
+  }
+\end{lstlisting}
+
 \subsubsection{Duty Cycle}
 
 Taking into account the time it takes to wake the RF part (take from datasheet

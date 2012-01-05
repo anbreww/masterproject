@@ -22,14 +22,14 @@ ovens.
 
 \subsection{433 MHz}
 
-The 433 Mhz ISM band (433.05 Mhz - 434.79 Mhz)
+The 433 Mhz ISM band (\SIrange{433.05}{434.79}{MHz})
 \footnote{\url{http://www.bakom.admin.ch/themen/frequenzen/00652/00653/index.html?lang=en}
 National Frequency Allocation Plan} is a very popular choice for short range,
 low cost devices. Its use is mainly for remote controlled devices, such as light
 switches or garage door openers. It is usually used for one-way transmissions.
 
-In Switzerland, the power limit for 433 Mhz is 1mW at 100\% duty cycle, or 10mW
-at 10\% duty cycle.
+In Switzerland, the power limit for \SI{433}{MHz} is \SI{1}{mW} at 100\% duty
+cycle, or \SI{10}{mW} at 10\% duty cycle.
 
 % TODO : find the OFCOM document with power limits per frequency band
 
@@ -48,14 +48,14 @@ were to be used outside of Europe and the Middle East (\emph{Region 1}).
 
 \subsection{Sub-GHz}
 
-In addition to the 433 Mhz ISM band, there is another option, commonly referred
-to as the \emph{Sub-Ghz} band, which is centered around 863.5 Mhz in Region 1,
-and 915 Mhz in Region 2.
+In addition to the \SI{433}{Mhz} \ac{ISM} band, there is another option,
+commonly referred to as the \emph{Sub-Ghz} band, which is centered around
+\SI{863.5}{Mhz} in Region 1, and \SI{915}{Mhz} in Region 2.
 
 % TODO : reword the following paragraph
 Devices operating in this frequency range are becoming increasingly common. Most
 major chip manufacturers are producing chips that can switch between these bands
-( 433 / 868 / 915 Mhz ).
+( 433 / 868 /\SI{915}{Mhz}).
 
 The main appeal of the sub-Ghz band is that it is less crowded than the 2.4 Ghz
 band. This is becoming increasingly true with time as we are seeing more and
@@ -74,7 +74,7 @@ will have to be made for the North American market.
 This band is currently the most popular part of the spectrum for personal
 electronic devices that must communicate together. Current applications include
 WiFi, Bluetooth, and the IEEE 802.15.4 standard, which is the basis for ZigBee
-and 6LoWPAN, which will be covered elsewhere in this report.
+and \ac{6LoWPAN}, which will be covered elsewhere in this report.
 
 This popularity has its advantages as well as drawbacks. One of the main
 advantages is that there are a very wide variety of devices now available that
@@ -82,9 +82,39 @@ operate at this frequency.
 
 % TODO : define ``elsewhere''
 
+In spite of [all this], the author's previous experience with ZigBee devices has
+shown that in a typical domestic environment, with many wireless devices active,
+it is possible to achieve a reliable link between devices in different rooms and
+on different floors. Furthermore, we will be favouring a networking stack that
+can provide mesh capabilities. This will lower the importance of the range, as
+extending the range of the network is a simple matter of adding a cheap repeater
+(router) device at some point in the data path. For example, if communication
+cannot be established between the first and third floors, a router can be placed
+on the second floor to bridge the gap between those two domains.
+
+
 \section{Comparison}
 
 Here, a table comparing the advantages/disadvantages of each tech
+
+
+\begin{table}
+    \myfloatalign
+  \begin{tabularx}{\textwidth}{Xll} \toprule
+    \tableheadline{Criteria} & \tableheadline{Sub Ghz}
+    & \tableheadline{2.4 Ghz} \\ \midrule
+    fastidii ea ius & germano &  demonstratea \\
+    suscipit instructior & titulo & personas \\
+    %postulant quo & westeuropee & sanctificatec \\
+    \midrule
+    quaestio philosophia & facto & demonstrated \\
+    %autem vulputate ex & parola & romanic \\
+    %usu mucius iisque & studio & sanctificatef \\
+    \bottomrule
+  \end{tabularx}
+  \caption[Frequency comparison]{Frequency comparison}
+  \label{tab:frequency-comparison}
+\end{table}
 
 \section{In hindsight}
 
@@ -124,6 +154,16 @@ but it's still not available today}
 Now we'll want to somehow format the huge excel table into something we can
 include in a report\ldots hmmm.
 
+% TODO : incorporate this somewhere
+
+From a portability and cost point, it may be preferable to have the networking
+stack and hardware in one dedicated and cheap module, and adapt the target
+hardware to the desired application. There is no need to use a device with
+a Cortex M3 core to read a temperature sensor or turn off a light. However, some
+application may call for more processing power, such as an M4 or an FPGA, in
+which case the processing power of the STM32W will be wasted, and it will simply
+be added to the cost for nothing.
+
 \section{Observations}
 
 What we've deduced from the project : was it the right choice? What could we
@@ -143,3 +183,9 @@ have done better?
     which could be a very interesting option if space permits. Especially if
     using PCB antenna, would not increase costs too much.
 \end{itemize}
+
+
+\section{Microcontroller}
+
+A few words on the STM32, what is specific about it, talk about the M3 core, the
+instruction set, cpu clock

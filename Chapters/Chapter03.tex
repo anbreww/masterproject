@@ -2,7 +2,75 @@
 \chapter{Hardware development}\label{ch:examples}
 %*****************************************
 %\setcounter{figure}{10}
+
+The hardware for this device went through two major revisions. The first was
+destined to assess the functionality of the chip, and make sure that it was
+possible to establish communication between two nodes. Since design of a system
+with a built-in antenna and transceiver was new to the author, it was essential
+to proceed in small, manageable steps to help debugging if problems were to
+arise. For these same reasons, the current designs remain very close to the
+suggested reference designs.
+
+After testing several versions and multiple components, and comparing them to
+existing designs with other chips, we have formed some ideas on ways to improve
+the design, which we will cover in [blah] % TODO : reference the chapter
+Indeed, although we have obtained performance very similar to the reference
+design provided by ST Microelectronics, we believe it is possible to achieve
+a better design than the reference
+
+[Image] compare both versions side by side. Show the dimensions on each.
+
 \section{Version 1}
+
+Version 1 is comprised of the STM32W108 at the heart of the design. This chip
+serves as the transceiver and core microcontroller for the device. All
+supporting (passive) components have been placed as in the reference design, so
+as to minimize the potential for error. 
+
+The schematic contains two SMD pushbuttons (SW1 and SW2), but these were removed
+as they occupy too much space on the PCB. Likewise, the RP-SMA connector (P2) to
+the left of the schematic is absent from the PCB for the same reason. In the
+second version of the PCB, the components have been rearranged to make space for
+this connector.
+
+The design offers an external UART connection (P1) on a 4-pin header with
+\SI{2.54}{mm} spacing. The chip can be programmed through P3, a 4-pin
+Micro-MaTch\textsuperscript{\texttrademark} connector.
+
+The PCB incorporates an RGB LED for debug purposes, but the footprint was found
+to be incorrect. This has been corrected in the second version.
+
+The difference that the reader will most likely notice first between the two
+revisions of the PCB is the removal of the audio amplification in the second
+version. 
+
+% TODO : explain why we had this, and why we removed it.
+
+
+\subsection{Antenna Design}
+
+% TODO : add references
+% Antenna design STM
+% AN3206 PCB design guidelines for the STM32W108 platform
+
+We used application note about PCB design : \cite{AN3206} as well as
+\cite{AN3359} for antenna design
+
+Note some confusion about specifications : \emph{``The STM32W108 Reference
+Design is built on a 4-layer, FR-4 epoxy PCB.''}\cite{AN3206}. However, the
+Gerber files available for download from the website as well as the directives
+given in AN3359\cite{AN3359} suggest using a 2-layer PCB.
+
+Used advice from \cite{DropoutGuide} since we couldn't get any help from EPFL
+experts.
+
+\subsubsection{Chip Antenna}
+
+% TODO : include a photo of the starter kit to compare
+
+\subsubsection{Wire Antenna}
+\subsubsection{External Antenna}
+\subsubsection{PCB Antenna}
 
 Explain some details of the design, explain choice for components, say a few
 words about the audio part?
@@ -12,9 +80,48 @@ words about the audio part?
 Explain why we dropped the audio part. Complete reasoning for each pin of the
 expansion port. Why we dropped the programming connector.
 
+\subsection{I/O Connector}
+
+\begin{table}
+    \myfloatalign
+  \begin{tabularx}{\textwidth}{llX} \toprule
+    \tableheadline{Pin \#} & \tableheadline{Port Number}
+    & \tableheadline{Function} \\ \midrule
+    1   & +3.3V   & Power from regulator    \\
+    2   & GND     & Ground Connection       \\
+    3   & PC4     & SWDIO : Debug Data      \\
+    \midrule
+    4   & SWCLK   & SWCLK : Debug Clock     \\
+    5   & PA0     & Timer2 Channel 1        \\
+    6   & PB0     & General Purpose I/O     \\
+    \midrule
+    7   & PX0     & Derp, this will be quite a long explanation, it might
+                    even span several lines \\
+    8   & PX0     & Herp     \\
+    9   & PX0     & Durr     \\
+    \midrule
+    10   & PX0     & Derp        \\
+    11   & PX0     & Herp     \\
+    12   & PX0     & Durr     \\
+    \midrule
+    13   & PX0     & Derp        \\
+    14   & PX0     & Herp     \\
+    15   & PX0     & Durr     \\
+    \midrule
+    16   & PX0     & Derp        \\
+    17   & PX0     & Herp     \\
+    18   & PX0     & Durr     \\
+    \bottomrule
+  \end{tabularx}
+  \caption[Frequency comparison]{Frequency comparison}
+  \label{tab:frequency-comparison}
+\end{table}
+
 \section{Example application : Triac module}
 
 Explain that the aim of the project was not to produce a design with lots of
 applications but rather to provide a test platform and sufficient data to
 compare available solutions. Application-specific modules are to be developed
 later on when an application has been chosen.
+
+
