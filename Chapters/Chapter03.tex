@@ -82,6 +82,13 @@ expansion port. Why we dropped the programming connector.
 
 \subsection{I/O Connector}
 
+In this revision, the emphasis was placed on minimizing board space. In order to
+do this, all the connectors were removed, and replaced by a small-pitch general
+purpose connector, which should be suitable for most needs.
+
+Connectivity is provided by an 18-pin connector in \SI{2}{mm} pitch. It provides
+power, drawn from the \SI{3.3}{V} regulator on the board. 
+
 \begin{table}
     \myfloatalign
   \begin{tabularx}{\textwidth}{llX} \toprule
@@ -92,30 +99,120 @@ expansion port. Why we dropped the programming connector.
     3   & PC4     & SWDIO : Debug Data      \\
     \midrule
     4   & SWCLK   & SWCLK : Debug Clock     \\
-    5   & PA0     & Timer2 Channel 1        \\
-    6   & PB0     & General Purpose I/O     \\
+    5   & PA0     & PWM4        \\
+    6   & PB0     & GPIO 3    \\
     \midrule
-    7   & PX0     & Derp, this will be quite a long explanation, it might
-                    even span several lines \\
-    8   & PX0     & Herp     \\
-    9   & PX0     & Durr     \\
+    7   & PA6     & Timer1 Channel 3        \\
+    8   & PA7     & Timer1 Channel 4     \\
+    9   & PB3     & GPIO 1 / CTS    \\
+
+%    \bottomrule
+%  \end{tabularx}
+%  \caption[I/O Connector]{I/O Connector}
+%  \label{tab:io-connector}
+%\end{table}
+%
+%\begin{table}
+%    \myfloatalign
+%  \begin{tabularx}{\textwidth}{llX} \toprule
+%    \tableheadline{Pin \#} & \tableheadline{Port Number}
+%    & \tableheadline{Function} \\ \midrule
     \midrule
-    10   & PX0     & Derp        \\
-    11   & PX0     & Herp     \\
-    12   & PX0     & Durr     \\
+    10   & PB4     & GPIO 2 / RTS        \\
+    11   & PB1     & UART TX     \\
+    12   & PB2     & UART RX     \\
     \midrule
-    13   & PX0     & Derp        \\
-    14   & PX0     & Herp     \\
-    15   & PX0     & Durr     \\
+    13   & PB7     & ADC2        \\
+    14   & PA1     & PWM2     \\
+    15   & PB6     & ADC1     \\
     \midrule
-    16   & PX0     & Derp        \\
-    17   & PX0     & Herp     \\
-    18   & PX0     & Durr     \\
+    16   & PA2     & PWM1        \\
+    17   & PB5     & ADC0     \\
+    18   & PA3     & PWM0     \\
     \bottomrule
   \end{tabularx}
-  \caption[Frequency comparison]{Frequency comparison}
-  \label{tab:frequency-comparison}
+  \caption[I/O Connector]{I/O Connector}
+  \label{tab:io-connector}
 \end{table}
+
+Each pin's function is summarized in \autoref{tab:io-connector}. The detailed
+functionality is as follows:
+
+\begin{itemize}
+  \item \emph{GPIO} : General Purpose I/O pins. These pins have no particular
+    special function. They will most likely be used to read switches or activate
+    leds and relays.
+    
+    GPIO1 and GPIO2 can be used respetively as CTS and RTS lines if the UART
+    module is to be used in flow control mode.
+  \item \emph{Timer 1} : Two channels of timer 1 are provided. These can be used
+    as output compare channels for \ac{PWM} or as input captures.
+  \item \emph{Timer 2} : All four channels of timer 2 are broken out to the
+    expansion port. This allows the user to perform an input capture on all four
+    channels of the same timer, for instance to measure the distance between
+    peaks on separate channels with a high resolution. These channels can also
+    be used as \ac{PWM} outputs.
+
+    Furthermore, pins 14 and 16 can be used for $I^{2}C$. All four timer 2 pins
+    can serve the function of an SPI controller.
+  \item \emph{<++>} : <++>
+\end{itemize}
+
+Naturally, each of these pins can also be used as general purpose inputs or
+outputs.
+
+\subsection{Debug LED}
+
+An RGB LED is available on port C for debug purposes. Connections are described
+in \autoref{tab:led-assignments}. The power consumption of each colour was
+measured with the given resistor values, for a \SI{3.3}{V} operating voltage.
+
+No effort was made to reduce power consumption of the LED, since its purpose is
+for debug only. If it is required as an indicator, we recommend using very short
+pulses to reduce the average power consumption of the indicator. If necessary,
+the resistor values can also be adjusted.
+
+% TODO : measure consumption per colour and describe the procedure.
+% TODO : mention the joule losses in the resistors?
+
+\begin{table}
+    \myfloatalign
+  \begin{tabularx}{\textwidth}{llX} \toprule
+    \tableheadline{Pin Name} & \tableheadline{LED Colour}
+    & \tableheadline{Measured Power Consumption} \\ \midrule
+    PC0   & Red     & \SI{20}{mA}   \\
+    PC1   & Green   & \SI{20}{mA}   \\
+    PC2   & Blue    & \SI{20}{mA}   \\
+    \bottomrule
+  \end{tabularx}
+  \caption[LED Assignment]{LED Assignment}
+  \label{tab:led-assignments}
+\end{table}
+
+
+
+\section{Possible future improvements}
+
+If the goal is to minimize board size, there are a few straightforward
+modifications that can still be made. The current version is a compromise
+between versatility and compactness.
+
+\begin{itemize}
+  \item \emph{I/O Connector} : The current connector was chosen to offer a large
+    choice of inputs and outputs for various applications. If the target
+    application only requires a small number of inputs and outputs, a much
+    smaller connector can be used. It would also be feasible to use
+    a \SI{1.27}{mm} pitch connector. 
+    Furthermore, for a production run, it would be advisable to separate the
+    debug and programming connections (SWDIO and SWCLK) from the expansion port.
+    These could be replaced either by a dedicated connector or by pads to be
+    used in a spring-loaded jig.
+  \item \emph{Debug LED} : This is provided for convenience during programming.
+    It is obviously not required for most applications. 
+  \item \emph{\SI{3.3}{V} Regulator} : This is another item that was included
+    for convenience during development. If the target application is capable of
+    providing a \SI{3}{V} output, the regulator on this board can be omitted.
+\end{itemize}
 
 \section{Example application : Triac module}
 
