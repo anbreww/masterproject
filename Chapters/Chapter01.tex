@@ -2,6 +2,7 @@
 \chapter{Introduction}\label{ch:introduction}
 %************************************************
 
+% TODO : fill this
 The aim of this project is to develop a platform for a wireless sensor network,
 which can be used in various applications, but primarily aimed at home
 automation. 
@@ -11,6 +12,7 @@ automation.
 First, talk about social implications of home automation, how the market is
 evolving, what kind of tech is around.
 
+% TODO : write this section
 Second, look at what kinds of tech are available, mention how fast the industry
 is moving, and therefore why it's worth surveying the landscape regularly to
 scout out new solutions and test them. Take some established products and show
@@ -19,36 +21,46 @@ the BQ25504 as an example.
 
 \section{Cahier des Charges}\label{sec:cdc}
 
-In this section, we shall briefly look through the requirements set forth for
-this project. Each item will be examined fully in the rest of this document.
+We will begin with a brief description of the project's requirements. These are
+the guidelines that were set forth at the beginning of the project. This list of
+items should cover the needs of a basic sensor network for indoor use. This
+section only provides an overview of the various subjects that will need to be
+covered. Each one will be looked at more in detail later in this document.
 
 \begin{itemize}
-  \item \emph{Low production cost} : the system must be scalable within
+  \item \emph{Low production cost} :
+    the system must be scalable within
     a domestic environment and therefore remain very affordable. The aim is for
-    the main components to cost less than 10 CHF. % TODO : units!
-  \item \emph{Ultra low consumption} : wireless modules must be able to run for
-    a very long time on a single charge. We shall also attempt to verify
-    whether it is possible for the device to run using only indoor solar power.
-  \item \emph{Bidirectional RF} : % TODO : mention current project?
+    the main components to cost less than CHF~10. The cost of the final version
+    will be analyzed in \autoref{sec:cost}.
+  \item \emph{Ultra low consumption} :
+    wireless modules must be able to run for a very long time on a single
+    charge. We shall also attempt to verify whether it is possible for the
+    device to run using only indoor solar power.  Power consumption will be
+    covered in \autoref{sec:power}.
+  \item \emph{Bidirectional RF} : 
     in order to work as a network, all devices must be able to communicate both
     way. This will allow at the very least for an end device to acknowledge
     that it has correctly received an instruction.
-  \item \emph{Processing power} : the basic platform must be able to run some
-    algorithms on live audio data, and therefore must be capable of calculating
-    a basic \ac{FFT} in real time.
-  \item \emph{I/O} : each basic module should have some spare inputs and
-    outputs which can be used to drive LEDs or relays (using \ac{PWM} if
-    necessary) and gather input from switches or sensors.
-  \item \emph{Analog Inputs} : the device must have at least one analog input.
-  \item \emph{Storage} : the device must have sufficient memory to run the
-    algorithms necessary for the target application.\footnote{As the target
-    application had not been clearly defined when the project requirements were
-    drafted, this is quite a subjective requirement.}
+    Choices in RF technology will be explained in \autoref{sec:frequency}.
+  \item \emph{Processing power} :
+    the basic platform must be able to run some algorithms on live audio data,
+    and therefore must be capable of calculating a basic \ac{FFT} in real time.
+    This requirement will be taken into account when comparing various
+    microcontrollers, in \autoref{sec:chips}.
+  \item \emph{I/O} :
+    each basic module should have some spare inputs and outputs which can be
+    used to drive LEDs or relays (using \ac{PWM} if necessary) and gather input
+    from switches or sensors.
+  \item \emph{Analog Inputs} :
+    the device must have at least one analog input. Digital and analog outputs
+    will be described in \autoref{sub:io-connector}.
+  \item \emph{Storage} :
+    the device must have sufficient memory to run the algorithms necessary for
+    the target application.\footnote{As the target application had not been
+    clearly defined when the project requirements were drafted, this is quite
+    a subjective requirement.}
 \end{itemize}
-
-
-Precision about power consumption : compare to a standard op amp which would be
-always powered on.
 
 The goal of this project is to evaluate the various wireless communication
 standards that are currently on the market, and produce a working proof of
@@ -59,7 +71,45 @@ stage of the project.
 
 \section{Power}\label{sec:power}
 
-%TODO : explain solar power and stuffs
+One of the selling points of a home automation network is that it should not get
+in the way. After it has been installed, it should require as little maintenance
+as possible. If a user were to install several dozen wireless modules throughout
+their home, and each of these modules required a battery change every year, the
+user could end up having to replace batteries on average several times a month. 
 
-The nodes should be able to survive on solar power. Their power usage pattern
-is quite different from that of the ``router'' devices. % TODO : explain this
+It is not always possible to connect a module to a mains power source. For
+instance, some modules will be placed outside the house to measure temperature
+and humidity. Some could be placed on or under tables, to monitor activity, or
+in various places along walls where wiring them would be impractical. For this
+reason, most of the modules forming this network should be able to function
+using only solar power harvested inside the house, with a battery to store
+excess power.
+
+In order to meet this goal, we will develop a module which will be capable of
+spending most of its time in sleep mode, using only a low-powered clock to wake
+up periodically. We are hoping for power consumption below
+\SI{1}{\micro\ampere} in sleep mode. In parallel to this project, a series of
+tests will be run, logging the amount of power that can be harvested from indoor
+illumination using small and cheap solar panels.
+
+In spite of these observations, these modules were primarily targeted towards
+audio processing applications. The project specifications demanded that at least
+one amplifier be present on one of the analog inputs. These components demand
+a certain current to function. As an example, the MAX4466 micropower
+preamplifier, included in the early revisions of the design, consumes
+\SI{24}{\micro\ampere} constantly when enabled. This was taken to account when
+choosing the microcontroller for our application. More details follow in
+\autoref{sec:chips}.
+
+Finally, not all nodes will necessarily be solar powered. In order to form
+a reliable network, some devices must act as ``routers''. In mesh networks such
+as ZigBee or \ac{6LoWPAN}, these devices will often be constantly powered on,
+ready to receive and relay information to the rest of the network.
+
+% TODO : either go into more detail here, or later in a network section.
+% otherwise link to relevant documentation
+
+\section{Cost}\label{sec:cost}
+
+The detailed bill of materials for the lastest version can be found in
+\autoref{ch:appendix-design} under \autoref{sub:bom-v2}.

@@ -9,16 +9,27 @@ possible to establish communication between two nodes. Since design of a system
 with a built-in antenna and transceiver was new to the author, it was essential
 to proceed in small, manageable steps to help debugging if problems were to
 arise. For these same reasons, the current designs remain very close to the
-suggested reference designs.
+suggested reference designs. \autoref{fig:base-platforms} shows both versions of
+the device side-by-side.
 
 After testing several versions and multiple components, and comparing them to
 existing designs with other chips, we have formed some ideas on ways to improve
-the design, which we will cover in [blah] % TODO : reference the chapter
+the design, which we will cover in \autoref{ch:improvements}.
 Indeed, although we have obtained performance very similar to the reference
 design provided by ST Microelectronics, we believe it is possible to achieve
-a better design than the reference
+a better design than the reference.
 
-[Image] compare both versions side by side. Show the dimensions on each.
+% TODO : images here
+\begin{figure}[bth]
+  \myfloatalign
+  \subfloat[Version 1]
+  {\includegraphics[width=.45\linewidth]{gfx/base-node_photo_lores}}
+  \subfloat[Version 2]
+  {\includegraphics[width=.45\linewidth]{gfx/frontpage}}
+  \caption{Base platforms}
+  \label{fig:base-platforms}
+\end{figure}
+
 
 \section{Version 1}
 
@@ -37,50 +48,154 @@ The design offers an external UART connection (P1) on a 4-pin header with
 \SI{2.54}{mm} spacing. The chip can be programmed through P3, a 4-pin
 Micro-MaTch\textsuperscript{\texttrademark} connector.
 
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{gfx/node-v1}
+  \end{center}
+  \caption{Version 1 PCB Prints}
+  \label{fig:v1-prints}
+\end{figure}
+
 The PCB incorporates an RGB LED for debug purposes, but the footprint was found
 to be incorrect. This has been corrected in the second version.
 
-The difference that the reader will most likely notice first between the two
-revisions of the PCB is the removal of the audio amplification in the second
-version. 
-
-% TODO : explain why we had this, and why we removed it.
+Version 1 of the design incorporates an audio amplification section, which was
+later removed. This section was meant to amplify up to three chanels of analog
+audio, as well as route one channel through a comparator, to wake the chip when
+an incoming signal was detected. As this was not directly required in the
+context of this project, it was scrapped, in favour of later designing a plug-in
+module which would make use of the expansion port. The I/O port retains the pins
+needed for such an application, namely the three analog inputs, as well as three
+input capture interfaces.
 
 
 \subsection{Antenna Design}
 
-% TODO : add references
-% Antenna design STM
-% AN3206 PCB design guidelines for the STM32W108 platform
+Radio frequency engineering, especially antenna design, is an area which
+requires a lot of expertise. The design of an antenna itself would be
+a sufficient topic for an entire Masters thesis by someone with experience in
+that area. In this case, neither the author nor his supervisor have extensive
+experience with antenna design. Attempts to get help from specialized labs
+within EPFL were unsuccessful. In light of these facts, the information
+contained in this section should be considered from the point of view of amateur
+designers, seeking a way to use an antenna effectively, without any formal
+background in that topic. Data and observations made here are mostly qualitative
+and empirical.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{gfx/snippets/altium-antenna}
+  \end{center}
+  \caption{PCB Trace Antenna}
+  \label{fig:trace-antenna}
+\end{figure}
+
+Considering all this, we set out to design a prototype using whatever data was
+available and accessible to us. Most decisions were made according to the
+manufacturer's application notes, namely ``\emph{PCB design guidelines for the
+STM32W108 platform}''\citep{AM3206} as well as ``\emph{Low cost PCB antenna for
+\SI{2.4}{Ghz} radio : meander design}''\citep{AN3359}. Additional advice on
+design and testing was gathered from ``\emph{The Dropout's Guide to PCB Trace
+Antenna Design}''\citep{DropoutGuide}. 
+
+What follows is a brief description of the various types of antenna one might
+encounter, and a comparison between those designs. 
+
+\subsubsection{Chip Antenna}
+
+% TODO : include a photo of the starter kit to compare
+
+A chip antenna requires little board space, usually less than a PCB trace
+antenna. However, they are difficult to tune if needed, and increase the cost of
+the overall bill of materials.
+
+The example kit (\emph{STM32W-RFCKIT}) contains both a board with a chip antenna
+and a PCB trace antenna, so it will be possible to make some comparisons between
+the two options. In testing, covered in \autoref{ch:performance}, our current
+prototype will be compared to another student's design, using a chip antenna
+operating at the same frequency.
+
+In the end, this option was discarded because of its cost and difficulty to
+tune, if the need were to arise.
+
+\subsubsection{Wire Antenna}
+
+Wire antennas can prove quite efficient in transmission, but require a lot of
+space around the board. They are also very sensitive to the length of wire
+used, as well as the type of material. 
+
+They have proven quite efficient in the author's personal experience, in dealing
+with commercial ZigBee devices. It was often possible to establish
+a communication over two concrete floors in a typical domestic environment using
+XBee transmitters outfitted with wire antennas.
+
+\subsubsection{External Antenna}
+
+The external antenna offers much better performance than the other antennas
+mentioned in this listing. It does however require a lot more space than the
+other solutions. Its cost is prohibitive in the current case : the cost of an
+external antenna is almost the same as all other components of the design put
+together.
+
+However, we recognize that it may be desirable for some nodes to have better
+performance than others, especially in the case of router nodes. Therefore,
+version 2 of the transceiver incorporates a footprint for an external antenna on
+an RP-SMA connector.
+
+\subsubsection{PCB Antenna}
+
+For reasons similar to those expressed in the aforementioned guide, the
+prototype device will use a PCB trace antenna. In addition to that, we will
+include a footprint for adding an RP-SMA connector. The reasons for this choice
+are as follows:
+
+\begin{itemize}
+  \item It is the cheapest option, as it requires no external components. Its
+    only cost is board area.
+  \item It can be easily combined with an RP-SMA connector. A capacitor can be
+    soldered in one of two places to determine which antenna will be used. 
+  \item A reference design is easily available, as well as a starter kit which
+    can be used as a benchmark for performance tests.
+  \item Results are generally more repeatable than with a wire antenna, and less
+    dependent on solder joints than a chip antenna.
+  \item Occupies less space than a wire antenna, therefore easier to fit inside
+    an enclosure.
+\end{itemize}
+
+% TODO 
+Explain some details of the design, explain choice for components, say a few
+words about the audio part?
 
 We used application note about PCB design : \cite{AN3206} as well as
 \cite{AN3359} for antenna design
 
-Note some confusion about specifications : \emph{``The STM32W108 Reference
-Design is built on a 4-layer, FR-4 epoxy PCB.''}\cite{AN3206}. However, the
+Note some confusion about specifications : ``\emph{The STM32W108 Reference
+Design is built on a 4-layer, FR-4 epoxy PCB}''\citep{AN3206}. However, the
 Gerber files available for download from the website as well as the directives
 given in AN3359\cite{AN3359} suggest using a 2-layer PCB.
 
 Used advice from \cite{DropoutGuide} since we couldn't get any help from EPFL
 experts.
 
-\subsubsection{Chip Antenna}
-
-% TODO : include a photo of the starter kit to compare
-
-\subsubsection{Wire Antenna}
-\subsubsection{External Antenna}
-\subsubsection{PCB Antenna}
-
-Explain some details of the design, explain choice for components, say a few
-words about the audio part?
 
 \section{Version 2}
 
-Explain why we dropped the audio part. Complete reasoning for each pin of the
-expansion port. Why we dropped the programming connector.
+% TODO 
+Explain why we dropped the audio part.
+% TODO 
+Complete reasoning for each pin of the expansion port.
+% TODO 
+Why we dropped the programming connector.
 
-\subsection{I/O Connector}
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{gfx/node-v2}
+  \end{center}
+  \caption{Version 2 PCB Prints}
+  \label{fig:v2-prints}
+\end{figure}
+
+\subsection{I/O Connector}\label{sub:io-connector}
 
 In this revision, the emphasis was placed on minimizing board space. In order to
 do this, all the connectors were removed, and replaced by a small-pitch general
@@ -155,6 +270,11 @@ functionality is as follows:
 
     Furthermore, pins 14 and 16 can be used for $I^{2}C$. All four timer 2 pins
     can serve the function of an SPI controller.
+  \item \emph{Debug} : The device can be programmed and debugged using an
+    \emph{ST-Link} device or by JTAG. The \emph{ST-Link} was chosen for this
+    design as it requires only two pins to function. Connecting the board to the
+    debugger is covered in \autoref{sub:debugging}.
+    % TODO : make a section about programming, debugging, the connector etc
   \item \emph{<++>} : <++>
 \end{itemize}
 
@@ -166,16 +286,10 @@ outputs.
 An RGB LED is available on port C for debug purposes. Connections are described
 in \autoref{tab:led-assignments}. The power consumption of each colour was
 measured with the given resistor values, for a \SI{3.3}{V} operating voltage.
+These results were obtained by measuring the total consumption of the device
+with the LED on, then subtracting the consumption with the LED turned off.
 
-No effort was made to reduce power consumption of the LED, since its purpose is
-for debug only. If it is required as an indicator, we recommend using very short
-pulses to reduce the average power consumption of the indicator. If necessary,
-the resistor values can also be adjusted.
-
-% TODO : measure consumption per colour and describe the procedure.
-% TODO : mention the joule losses in the resistors?
-
-\begin{table}
+\begin{table}[tbh]
     \myfloatalign
   \begin{tabularx}{\textwidth}{llX} \toprule
     \tableheadline{Pin Name} & \tableheadline{LED Colour}
@@ -188,6 +302,60 @@ the resistor values can also be adjusted.
   \caption[LED Assignment]{LED Assignment}
   \label{tab:led-assignments}
 \end{table}
+
+No effort was made to reduce power consumption of the LED, since its purpose is
+for debug only. If it is required as an indicator, we recommend using very short
+pulses to reduce the average power consumption of the indicator. If necessary,
+the resistor values can also be adjusted.
+
+% TODO : measure consumption per colour and describe the procedure.
+% TODO : mention the joule losses in the resistors?
+
+\subsection{Debugging}\label{sub:debugging}
+
+Programming and debugging of the platform can be done using an \emph{ST-Link}
+device. There are two options for this : either by purchasing a standalone
+device through standard distributors such as Digi-Key, or by using an \emph{STM
+Discovery Kit}\footnote{These can be obtained quite easily for less than CHF~12.
+See \url{http://www.st.com/stm32-discovery} for details.}
+
+\begin{figure}[bth]
+  \myfloatalign
+  \subfloat[Version 1 Debug Link]
+  {\includegraphics[width=.45\linewidth]{gfx/placeholder-200x200}}
+  \subfloat[Version 2 Debug Link]
+  {\includegraphics[width=.45\linewidth]{gfx/placeholder-200x200}}
+  \caption{ST-Link Debugger Connections}
+  \label{fig:st-link}
+\end{figure}
+
+\autoref{tab:programming-connector} describes the connections between the
+discovery kit and the development platform. Pin number one on the platform
+refers to the upper left hand corner of the 18-pin connector, while pin one on
+the discovery kit is the upper-most pin, closest to the USB connector. Both
+versions of the connectors are illustrated in \autoref{fig:st-link}.
+
+
+\begin{table}[tbh]
+    \myfloatalign
+  \begin{tabularx}{\textwidth}{XXXX} \toprule
+    \tableheadline{SWD Pin \#} & \tableheadline{Cable}
+    & \tableheadline{Pin function} & \tableheadline{Platform Pin \#}\\ \midrule
+    1   & Red      & Vcc    & 2 \\
+    2   & Yellow   & SWCLK  & 3 \\
+    3   & Black    & Gnd    & 1 \\
+    4   & Green    & SWDIO  & 4 \\
+    \bottomrule
+  \end{tabularx}
+  \caption[Programming connector on ST-Link]{Programming connector on ST-Link}
+  \label{tab:programming-connector}
+\end{table}
+
+Programmers are usually supported by whichever programming environment is being
+used. In order to test the examples that are provided along with the files
+related to this project, the simplest solution is to use ST's own
+utility.\footnote{The ST-Link Utility can be downloaded from
+\url{http://www.st.com/internet/evalboard/product/219866.jsp}.}
 
 
 
@@ -216,9 +384,43 @@ between versatility and compactness.
 
 \section{Example application : Triac module}
 
-Explain that the aim of the project was not to produce a design with lots of
-applications but rather to provide a test platform and sufficient data to
-compare available solutions. Application-specific modules are to be developed
-later on when an application has been chosen.
+The main goal of this project was not to produce a suite of designs with various
+functions, but rather to come up with a general-purpose platform which could
+later be extended with various add-on modules. The expansion port should provide
+plenty of options to connect boards with sensors, relays and switches.
+
+Despite this, one small example module was developed to use as an example. The
+triac module is a simple board that can be used to control AC loads, up to
+\SI{4}{A} at \SI{230}{V}.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{gfx/TriacModule-Prints}
+  \end{center}
+  \caption{Triac Module}
+  \label{fig:triac-module}
+\end{figure}
+
+This module is one of the simplest applications of a triac : it contains an
+opto-triac, which drives the triac from a low-voltage DC source. Connector P3,
+on the left-hand side, can be connected to a microcontroller output. When
+\SI{3}{V} are applied to it, the triac will allow current to flow through the
+right hand side of the circuit. The mains power and load are to be connected
+respectively to P1 and P2. A standard \SI{5x20}{mm} fuse offers a simple
+protection against short circuit.
+
+It is important to be cautious when working with mains power. It is best to use
+a decoupling transformer, to separate oneself from the live mains, as well as
+cover up the exposed circuitry with non-conductive materials, such as
+heat-resistant adhesive tape.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=1.2\textwidth]{gfx/Triac-Schematic}
+  \end{center}
+  \caption{Triac Module Schematic}
+  \label{fig:triac-schematic}
+\end{figure}
+
 
 
