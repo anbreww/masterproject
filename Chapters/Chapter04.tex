@@ -86,3 +86,142 @@ operating conditions.
 
 
 
+
+\section{Comparison Tests}
+
+In parallel to this project, it was discovered that a similar student project
+was taking place. We decided to set up a simple experiment to compare, somewhat
+informally, the performance of both our designs.
+
+In this test, illustrated in \autoref{fig:test-setup}, we measure the
+transmission of the antenna, using an SMA connector soldered through the board,
+as described in % TODO : add ref to dropout's guide.
+
+\begin{figure}[htb]
+  \begin{center}
+    \makebox[\textwidth][c]{
+    \includegraphics[width=1.5\textwidth]{gfx/tests/test02-setup-cropped}
+    }
+  \end{center}
+  \caption{Comparison Test Setup}
+  \label{fig:test-setup}
+\end{figure}
+
+The network analyzer sweeps a range of frequencies, spanning \SI{0.5}{GHz}
+around \SI{2.45}{GHz} and measures the energy received through a ``rubber
+ducky'' monopole antenna. Each antenna was tested in two different orientations.
+First, the transceiver is placed approximately \SI{50}{cm} away from the
+antenna. The antenna is vertical, as in \autoref{fig:test-setup}, secured to
+a non-metallic support. The device under test is then placed at the other end of
+the setup, its feedline against the support. In this orientation, the plane
+containing the PCB is normal to the monopole antenna.
+
+In the second test, the device is placed at the same distance, turned 90° so
+that the antenna is now ``above'' the device. Each test was done in the same way
+for both devices under test.
+
+The device developed in this project will be referred to as \textbf{``device A''}.
+Jean-Baptiste's device will be referred to as \textbf{``device B''}.
+
+
+The following screenshots show the results of our four tests.
+
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{gfx/tests/test01-result}
+  \end{center}
+  \caption{Test 1 : device A, normal}
+  \label{fig:test01-result}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{gfx/tests/test02-result}
+  \end{center}
+  \caption{Test 2 : device A, parallel}
+  \label{fig:test02-result}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{gfx/tests/test03-result}
+  \end{center}
+  \caption{Test 3 : device B, normal}
+  \label{fig:test03-result}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{gfx/tests/test04-result}
+  \end{center}
+  \caption{Test 4 : device B, parallel}
+  \label{fig:test04-result}
+\end{figure}
+
+\pagebreak
+
+The results are summarized in \autoref{tab:comparison-results}. This table shows
+the attenuation measured in each case, in the center of the operating bandwidth
+(\ie~\SI{2.45}{GHz})
+
+It is worth noting at this point that these results are not to be taken for
+their quantitative values. Such testing requires a strict methodology in
+a controlled environment, which was not available in the context of this work.
+Instead, we present these results simply as a matter of comparison between two
+similar projects, using two different choices of antenna designs.
+
+\begin{table}
+    \myfloatalign
+  \begin{tabularx}{0.6\textwidth}{Xcc} \toprule
+    \tableheadline{} & \tableheadline{normal}
+    & \tableheadline{parallel} \\ \midrule
+    device A  & \SI{-63.3}{dB}  & \SI{-53.0}{dB} \\
+    device B  & \SI{-51.1}{dB}  & \SI{-43.1}{dB} \\
+    \bottomrule
+  \end{tabularx}
+  \caption[Comparison results]{Comparison results}
+  \label{tab:comparison-results}
+\end{table}
+
+\subsection{Observations}
+
+From this test, we can see that even though this project has achieved
+performance similar to the reference design, it is possible to do better, given
+the same requirements. It is quite clear from the approximately \SI{10}{dB}
+difference between both designs, that we can expect better results from using
+a different antenna in future versions.
+
+It remains to be seen however if it is possible to improve the design using only
+a PCB trace antenna, or if we must balance this potential performance
+improvement with the cost of a chip antenna.
+
+Although in theory these measurements were taken from the same point in the
+signal path, our device uses a band-pass filter in order to attenuate noise
+outside of the transmission band. This is often necessary to pass certification
+tests, as there is a limit to the amounts of radiation that can be produced
+outside of the legal frequency range. The band-pass filter has an insertion loss
+of up to \SI{3}{dB}, which must be taken into account. Even so, device B still
+outperforms our own.
+
+Unfortunately, we do not know for a fact whether such a protection is necessary
+or not, as it would require equipment and qualifications beyond our reach. 
+% TODO : add that the potential gain seems to justify that sort of testing.
+% probably note that if a project like this were to be taken any further, we'd
+% need some specialists to work on the RF part. A semester project testing
+% antenna designs at the lema would be nice
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{gfx/radiation-pattern}
+  \end{center}
+  \caption{PCB Antenna Radiation Pattern\citep{AN3359}}
+  \label{fig:radiation-pattern}
+\end{figure}
+
+Our final observation is that both devices are very sensitive to changes in
+orientation. Both antennas are meant to be omni-directional, however, some
+directions are clearly favoured over others. If we refer to page 12 of the
+antenna design guide\citep{AN3359}, we can see that the first orientation tested
+places the receiving antenna in the worst possible location in the radiation
+pattern. For convenience, this pattern is reproduced in
+\autoref{fig:radiation-pattern}
