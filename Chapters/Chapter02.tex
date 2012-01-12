@@ -2,6 +2,121 @@
 \chapter{Design Choices}\label{ch:choices}
 %************************************************
 
+\section{Communication}\label{sec:communication}
+
+The main specification that must be decided before we can start working on the
+design is the communication method.
+
+% TODO : blurb about what's needed : frequency, MAC, PHY, protocols, etc.
+
+In order to create a useful platform for home automation, the following features
+are desirable:
+
+\begin{itemize}
+  \item \emph{Universal} : frequencies, protocols should be universal, so that
+    the same hardware can be used anywhere without needing to make
+    region-specific versions.
+
+  \item \emph{Popular network stack} : <++>
+    % proprietary, vendor-specific : bad. if the chip maker decides to drop
+    % support, we're fucked. ZigBee is okay because it's very widespread, but it
+    % costs money. 
+    % supported by more devices, more libraries written, more stable, more
+    % documentation, etc.
+
+  \item \emph{Interoperability} : small sensor devices are not very useful on
+    their own. It is important to be able to extend the network. The best way to
+    achieve this, in the author's opinion, is to rely on \emph{open standards},
+    which would allow devices from multiple vendors to communicate using
+    a common set of standards and protocols. 
+
+  \item \emph{Reachable from anywhere} : if the application requires it, each
+    node must be reachable from anywhere the user may be. It is important for
+    the sensor network to be able to 
+    % helps with interoperability
+  \item \emph{Mesh topology (or similar)} : This can drastically improve the
+    range of a sensor network while keeping infrastructure costs low. See
+    \autoref{sec:topology} for more details.
+\end{itemize}<++>
+
+% TODO : these references
+
+We must add references to \citep{shelby2010} and \citep{hunn2010}.
+
+When mentioning IEEE~802.15.4, mention \citep{ieee802154}.
+
+\begin{quotation}
+Although the differences in radio specification have some effect, it is
+nothing like as great as that of the higher-layer stack.
+
+    --- \defcitealias{hunn2010}{Essentials of Short-Range Wireless}
+    \citetalias{hunn2010} \citep[pg. 20]{hunn2010}
+\end{quotation}
+
+
+\subsection{IPv6}
+
+On the subject of communication, it is important to mention how these wireless
+sensor networks will be connected to the outside world. 
+
+%TODO : ideas
+reachable from anywhere
+
+
+\section{Topology}\label{sec:topology}
+
+Wireless devices have the possibility to form links with any other device within
+their range. It is therefore important to define how these devices will
+communicate together : whether we will simply link two devices together in
+a point-to-point fashion (essentially replacing a wire with a radio link), to
+broadcast from one device to all receivers within range, or to use a more
+complex topology.
+
+There are many possibilities available\footnote{for more examples of topologies,
+see \citep[sec. 2.3.4]{hunn2010}.}, but we will only cover the most popular
+option : mesh topology.
+
+One of the differentiating factors of the IEEE 802.15.4 standard is the ability
+to form a mesh network. This is one of the most complex topologies to implement,
+but luckily its operation is covered by existing user libraries already, which
+makes it an excellent choice for developing robust applications.
+
+In a mesh network, nodes are differentiated by their role. In this case, there
+are two possibilities. \emph{End nodes} are low-powered nodes that spend most of
+their time asleep. In some cases, they will wake up periodically to check for
+any pending messages. In others, they will remain asleep until they have data to
+transmit. These devices are interconnected by \emph{routers} : nodes that are
+always awake, ready to relay messages between other nodes.
+
+\autoref{fig:mesh-topology} illustrates the way that nodes are connected
+together. The white circles are end nodes, whilst the grey circles represent
+routers. As their name suggests, \emph{end} nodes are only meant to be at the
+edges of the network and will not relay messages. The black circle is a special
+kind of router node, called the \emph{coordinator}. This node handles the
+creation and management of the network and must always be present.
+% TODO : perhaps mention beacon mode
+
+In practice, this topology has two important advantages. First, it allows the
+network to be extended with very little infrastructure cost. Indeed, if two end
+nodes are too far apart, all that is needed is to place one or more router nodes
+in between them. These will then automatically relay data between the neighbour
+nodes. Second, having multiple nodes in the same area increases the robustness
+of the network. When transmitting a message, nodes will auto-discover the most
+efficient path to deliver it. If some nodes fail, or get moved around or removed
+from the network, the nodes will find new paths to deliver the data. 
+
+% TODO : rearrange this ^ and that v  to blend them together
+
+These two scenarios are likely occurences in a domestic environment : in the
+first case, it is not unlikely that devices will only achieve a range of one
+storey vertically. If the network required fixed infrastructure (such as in
+a WiFi network for instance), each storey would need to house an access point.
+In the case of a mesh network, the nodes on one floor will relay the messages
+between the floor above and the floor below. 
+
+% TODO : figure, mesh network page 48 of fundamentals of short range wireless
+
+
 \section{Operating frequency}\label{sec:frequency}
 
 The first choice to be made is the frequency of operation. This is quite an
@@ -100,16 +215,13 @@ Here, a table comparing the advantages/disadvantages of each tech
 
 \begin{table}
     \myfloatalign
-  \begin{tabularx}{\textwidth}{Xll} \toprule
-    \tableheadline{Criteria} & \tableheadline{Sub Ghz}
-    & \tableheadline{2.4 Ghz} \\ \midrule
-    fastidii ea ius & germano &  demonstratea \\
-    suscipit instructior & titulo & personas \\
-    %postulant quo & westeuropee & sanctificatec \\
-    \midrule
-    quaestio philosophia & facto & demonstrated \\
-    %autem vulputate ex & parola & romanic \\
-    %usu mucius iisque & studio & sanctificatef \\
+  \begin{tabularx}{\textwidth}{Xlll} \toprule
+    \tableheadline{Criteria}
+    & \tableheadline{433 MHz}
+    & \tableheadline{868 / 915 MHz}
+    & \tableheadline{2.4 GHz} \\ \midrule
+    Region Independent    & Y/N & N & Y \\
+    Mesh networking stack & N   & Y & Y \\
     \bottomrule
   \end{tabularx}
   \caption[Frequency comparison]{Frequency comparison}
