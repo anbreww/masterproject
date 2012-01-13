@@ -17,7 +17,8 @@ existing designs with other chips, we have formed some ideas on ways to improve
 the design, which we will cover in \autoref{ch:improvements}.
 Indeed, although we have obtained performance very similar to the reference
 design provided by ST Microelectronics, we believe it is possible to achieve
-a better design than the reference.
+a better design than the reference. See \autoref{ch:performance} for the
+results.
 
 % TODO : images here
 \begin{figure}[bth]
@@ -101,6 +102,20 @@ Antenna Design}''\citep{DropoutGuide}.
 What follows is a brief description of the various types of antenna one might
 encounter, and a comparison between those designs. 
 
+%\begin{figure}[bth]
+%  \myfloatalign
+%  \subfloat[PCB Trace Antenna]
+%  {\includegraphics[width=.45\linewidth]{gfx/antennas/trace}}
+%  \subfloat[Wire Antenna]
+%  {\includegraphics[width=.45\linewidth]{gfx/antennas/wire}} \\
+%  \subfloat[Chip Antenna]
+%  {\includegraphics[width=.45\linewidth]{gfx/antennas/chip}}
+%  \subfloat[``Ducky'' antenna]
+%  {\includegraphics[width=.45\linewidth]{gfx/antennas/ducky}}
+%  \caption{Various types of antennas}
+%  \label{fig:antennas}
+%\end{figure}
+
 \subsubsection{Chip Antenna}
 
 % TODO : include a photo of the starter kit to compare
@@ -108,6 +123,15 @@ encounter, and a comparison between those designs.
 A chip antenna requires little board space, usually less than a PCB trace
 antenna. However, they are difficult to tune if needed, and increase the cost of
 the overall bill of materials.
+
+\begin{figure}[bth]
+  \begin{center}
+    \includegraphics[width=.45\linewidth]{gfx/antennas/chip}
+  \end{center}
+  \caption{Device with a chip antenna}
+  \label{fig:chip-antenna}
+\end{figure}
+\marginpar{TODO : replace these pictures with photos of my own devices}
 
 The example kit (\emph{STM32W-RFCKIT}) contains both a board with a chip antenna
 and a PCB trace antenna, so it will be possible to make some comparisons between
@@ -124,10 +148,23 @@ Wire antennas can prove quite efficient in transmission, but require a lot of
 space around the board. They are also very sensitive to the length of wire
 used, as well as the type of material. 
 
-They have proven quite efficient in the author's personal experience, in dealing
-with commercial ZigBee devices. It was often possible to establish
-a communication over two concrete floors in a typical domestic environment using
-XBee transmitters outfitted with wire antennas.
+\begin{figure}[bth]
+  \begin{center}
+    \includegraphics[width=.45\linewidth]{gfx/antennas/wire}
+  \end{center}
+  \caption{Device with a wire antenna}
+  \label{fig:wire-antenna}
+\end{figure}
+
+The most economical option is a 1/4 wavelength piece of wire\citep{slyt296}. At
+\SI{2.45}{GHz}, this translates to
+\begin{equation*}
+  \frac{1}{4} \cdot \frac{c}{\SI{2.45}{GHz}} = \SI{3.06}{cm}.
+  \label{eq:wavelength}
+\end{equation*}
+
+Clearly, this length of wire does not increase the cost of the board by any
+significant margin, but it could render the enclosure design problematic.
 
 \subsubsection{External Antenna}
 
@@ -137,12 +174,28 @@ other solutions. Its cost is prohibitive in the current case : the cost of an
 external antenna is almost the same as all other components of the design put
 together.
 
+\begin{figure}[bth]
+  \begin{center}
+    \includegraphics[width=.45\linewidth]{gfx/antennas/ducky}
+  \end{center}
+  \caption{An external ``rubber ducky'' antenna}
+  \label{fig:ducky-antenna}
+\end{figure}
+
 However, we recognize that it may be desirable for some nodes to have better
 performance than others, especially in the case of router nodes. Therefore,
 version 2 of the transceiver incorporates a footprint for an external antenna on
 an RP-SMA connector.
 
 \subsubsection{PCB Antenna}
+
+\begin{figure}[bth]
+  \begin{center}
+    \includegraphics[width=.45\linewidth]{gfx/antennas/trace}
+  \end{center}
+  \caption{Example device with a PCB trace antenna}
+  \label{fig:trace-antenna}
+\end{figure}
 
 For reasons similar to those expressed in the aforementioned guide, the
 prototype device will use a PCB trace antenna. In addition to that, we will
@@ -161,6 +214,54 @@ are as follows:
   \item Occupies less space than a wire antenna, therefore easier to fit inside
     an enclosure.
 \end{itemize}
+
+\subsubsection{Summary}
+
+In summary, there is no ``ideal'' choice for an antenna in a wireless project.
+Each model described previously has its own advantages and disadvantages. The
+choice will mostly be a compromise between performance, price and board space.
+\autoref{tab:antennas}, taken from a Texas Instruments application
+note\citep{slyt296}, does a decent job of summing up the differences between
+different types of antennas, for quick reference.
+
+Note that in this table, the antennas which we refer to here as ``wire antenna''
+and ``external antenna'' are grouped under one common category, as ``whip
+antennas''.
+
+\begin{table}[tbh]
+    \myfloatalign
+    \makebox[\textwidth][c]{
+    \begin{tabularx}{1.3\textwidth}{l|p{0.45\textwidth}|p{0.45\textwidth}} \toprule
+    \tableheadline{Antenna Types}
+    & \tableheadline{Pros}
+    & \tableheadline{Cons} \\ \midrule
+    PCB Antenna & 
+    Low cost
+
+    Good performance is possible
+
+    Small size is possible at high frequencies &
+    Difficult to design small and efficient antennas
+
+    Potentially large size at low frequencies \\
+    \midrule
+    Chip Antenna  &
+    Small size  &
+    Medium performance
+
+    Medium cost \\
+    \midrule
+    Whip Antenna  &
+    Good performance  &
+    High cost
+
+    Difficult to fit in many applications \\
+    \bottomrule
+  \end{tabularx}
+  }
+  \caption[Antenna Comparison]{Antenna Comparison}
+  \label{tab:antennas}
+\end{table}
 
 % TODO 
 Explain some details of the design, explain choice for components, say a few
