@@ -18,11 +18,12 @@ are desirable:
     region-specific versions.
 
   \item \emph{Popular network stack} : <++>
-    % proprietary, vendor-specific : bad. if the chip maker decides to drop
-    % support, we're fucked. ZigBee is okay because it's very widespread, but it
-    % costs money. 
     % supported by more devices, more libraries written, more stable, more
     % documentation, etc.
+    \marginpar{proprietary, vendor-specific : bad (if chip maker drops support,
+    we're doomed. ZigBee is okay because it's widespread, but licensing costs
+    money. MiWi and others are nice protocols, but not interoperable. Also not
+    cross-device compatible}
 
   \item \emph{Interoperability} : small sensor devices are not very useful on
     their own. It is important to be able to extend the network. The best way to
@@ -32,12 +33,13 @@ are desirable:
 
   \item \emph{Reachable from anywhere} : if the application requires it, each
     node must be reachable from anywhere the user may be. It is important for
-    the sensor network to be able to 
+    the sensor network to be able to interface with the global internet if need
+    be. More details about this can be found in \autoref{sub:ipv6}.
     % helps with interoperability
   \item \emph{Mesh topology (or similar)} : This can drastically improve the
     range of a sensor network while keeping infrastructure costs low. See
     \autoref{sec:topology} for more details.
-\end{itemize}<++>
+\end{itemize}
 
 % TODO : these references
 
@@ -54,7 +56,7 @@ nothing like as great as that of the higher-layer stack.
 \end{quotation}
 
 
-\subsection{IPv6}
+\subsection{IPv6}\label{sub:ipv6}
 
 On the subject of communication, it is important to mention how these wireless
 sensor networks will be connected to the outside world. 
@@ -88,6 +90,14 @@ any pending messages. In others, they will remain asleep until they have data to
 transmit. These devices are interconnected by \emph{routers} : nodes that are
 always awake, ready to relay messages between other nodes.
 
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{gfx/snippets/mesh}
+  \end{center}
+  \caption{Mesh topology\citep{hunn2010}}
+  \label{fig:mesh-topology}
+\end{figure}
+
 \autoref{fig:mesh-topology} illustrates the way that nodes are connected
 together. The white circles are end nodes, whilst the grey circles represent
 routers. As their name suggests, \emph{end} nodes are only meant to be at the
@@ -105,6 +115,7 @@ of the network. When transmitting a message, nodes will auto-discover the most
 efficient path to deliver it. If some nodes fail, or get moved around or removed
 from the network, the nodes will find new paths to deliver the data. 
 
+\marginpar{re-arrange these two paragraphs to make them more coherent}
 % TODO : rearrange this ^ and that v  to blend them together
 
 These two scenarios are likely occurences in a domestic environment : in the
@@ -114,7 +125,6 @@ a WiFi network for instance), each storey would need to house an access point.
 In the case of a mesh network, the nodes on one floor will relay the messages
 between the floor above and the floor below. 
 
-% TODO : figure, mesh network page 48 of fundamentals of short range wireless
 
 
 \section{Operating frequency}\label{sec:frequency}

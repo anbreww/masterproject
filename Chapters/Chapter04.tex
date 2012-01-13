@@ -67,6 +67,22 @@ to a slow mode, without RF, log to EEPROM and then send 10 readings at a time.
 
 \subsection{RF Power}
 
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=1.0\textwidth]{gfx/snippets/spectrum}
+  \end{center}
+  \caption{802.15.4 Channel Allocation\citep{hunn2010}}
+  \label{fig:channel-allocation}
+\end{figure}
+
+At \SI{2.4}{GHz}, the spectrum for the IEEE 802.15.4 is divided into 16 equal
+channels, each \SI{2}{MHz} wide, spaced \SI{5}{MHz} apart. The spectrum is
+centered around \SI{2.45}{GHz}.\citep[pg. 29]{ieee802154}
+
+Channel frequency is defined as $Fc = 2405 + 5 (k-11)$ in Megaherz, for $k
+= 11..26$.
+
 Illustrate the test setup, clearly indicate measuring distance. Test for various
 orientations.
 
