@@ -502,13 +502,17 @@ triac module is a simple board that can be used to control AC loads, up to
   \label{fig:triac-module}
 \end{figure}
 
-This module is one of the simplest applications of a triac : it contains an
-opto-triac, which drives the triac from a low-voltage DC source. Connector P3,
-on the left-hand side, can be connected to a microcontroller output. When
-\SI{3}{V} are applied to it, the triac will allow current to flow through the
-right hand side of the circuit. The mains power and load are to be connected
-respectively to P1 and P2. A standard \SI{5x20}{mm} fuse offers a simple
-protection against short circuit.
+This module is one of the simplest applications of a triac\footnote{a TRIAC,
+short for ``Triode for Alternating Current'', is an electronic component which
+allows current through its terminals in both directions when its gate is
+triggered by even a low-voltage source. Its use is very similar to that of
+a relay, with the difference that it is solid-state.}
+: it contains an opto-triac, which drives the triac from a low-voltage DC
+source. Connector P3, on the left-hand side, can be connected to
+a microcontroller output. When \SI{3}{V} are applied to it, the triac will allow
+current to flow through the right hand side of the circuit. The mains power and
+load are to be connected respectively to P1 and P2. A standard \SI{5x20}{mm}
+fuse offers a simple protection against short circuit.
 
 It is important to be cautious when working with mains power. It is best to use
 a decoupling transformer, to separate oneself from the live mains, as well as

@@ -79,6 +79,7 @@ to a slow mode, without RF, log to EEPROM and then send 10 readings at a time.
 At \SI{2.4}{GHz}, the spectrum for the IEEE 802.15.4 is divided into 16 equal
 channels, each \SI{2}{MHz} wide, spaced \SI{5}{MHz} apart. The spectrum is
 centered around \SI{2.45}{GHz}.\citep[pg. 29]{ieee802154}
+\marginpar{put this in chapter 2?}
 
 Channel frequency is defined as $Fc = 2405 + 5 (k-11)$ in Megaherz, for $k
 = 11..26$.
@@ -86,18 +87,32 @@ Channel frequency is defined as $Fc = 2405 + 5 (k-11)$ in Megaherz, for $k
 Illustrate the test setup, clearly indicate measuring distance. Test for various
 orientations.
 
-%\begin{table}
-%    \myfloatalign
-%  \begin{tabularx}{0.6\textwidth}{Xcc} \toprule
-%    \tableheadline{} & \tableheadline{normal}
-%    & \tableheadline{parallel} \\ \midrule
-%    device A  & \SI{-63.3}{dB}  & \SI{-53.0}{dB} \\
-%    device B  & \SI{-51.1}{dB}  & \SI{-43.1}{dB} \\
-%    \bottomrule
-%  \end{tabularx}
-%  \caption[Comparison results]{Comparison results}
-%  \label{tab:comparison-results}
-%\end{table}
+In order to compare the performance of various antenna choices, we used a simple
+test that could be run on all STM32W devices in our posession. Using the
+following code, the device under test was made to emit a continuous tone at
+a given frequency for a duration of 10 seconds. The average power was measured
+using a simple handheld spectrum analyzer\footnote{The device used is the
+\emph{RF Explorer}, a cheap piece of equipment which cannot be trusted to give
+very accurate results over its whole frequency range. This was our best choice,
+since unfortunately our access to professional equipment was limited. However,
+we have found that the results were sufficiently repeatable to enable us to
+compare different devices \emph{at the same frequency}. More information about
+the device can be found here : \url{http://micro.arocholl.com/}.}
+
+\begin{lstlisting}[language=C,caption=Tone generation code]
+  while(1) {
+    for(i=11; i<27; 1++) {
+      blink_green_led();  // signal that we're changing channels
+
+      ST_RadioSetChannel(i);
+      ST_RadioStartTransmitTone();
+
+      halCommonDelayMilliseconds(10000);
+
+      ST_RadioStopTransmitTone();
+    }
+  }
+\end{lstlisting}
 
 \begin{table}
   \myfloatalign

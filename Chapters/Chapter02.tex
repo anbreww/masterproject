@@ -13,17 +13,17 @@ In order to create a useful platform for home automation, the following features
 are desirable:
 
 \begin{itemize}
-  \item \emph{Universal} : frequencies, protocols should be universal, so that
-    the same hardware can be used anywhere without needing to make
-    region-specific versions.
+  \item \emph{Universal} :
+    The standards used to communicate must be universal and available worldwide,
+    so that the same hardware can be used anywhere without the need to develop
+    region-specific versions
 
-  \item \emph{Popular network stack} : <++>
-    % supported by more devices, more libraries written, more stable, more
-    % documentation, etc.
-    \marginpar{proprietary, vendor-specific : bad (if chip maker drops support,
-    we're doomed. ZigBee is okay because it's widespread, but licensing costs
-    money. MiWi and others are nice protocols, but not interoperable. Also not
-    cross-device compatible}
+  \item \emph{Popular network stack} : 
+    The network stack should ideally be a popular industry standard. This will
+    likely ensure that it is supported by more vendors, leading in turn to more
+    available libraries, more documentation and more support. By using
+    a well-established standard, we can ensure that if one vendor drops their
+    support, there will still be many others to choose from.
 
   \item \emph{Interoperability} : small sensor devices are not very useful on
     their own. It is important to be able to extend the network. The best way to
@@ -35,34 +35,57 @@ are desirable:
     node must be reachable from anywhere the user may be. It is important for
     the sensor network to be able to interface with the global internet if need
     be. More details about this can be found in \autoref{sub:ipv6}.
-    % helps with interoperability
+
   \item \emph{Mesh topology (or similar)} : This can drastically improve the
     range of a sensor network while keeping infrastructure costs low. See
     \autoref{sec:topology} for more details.
 \end{itemize}
 
-% TODO : these references
 
-We must add references to \citep{shelby2010} and \citep{hunn2010}.
-
-When mentioning IEEE~802.15.4, mention \citep{ieee802154}.
-
-\begin{quotation}
-Although the differences in radio specification have some effect, it is
-nothing like as great as that of the higher-layer stack.
-
-    --- \defcitealias{hunn2010}{Essentials of Short-Range Wireless}
-    \citetalias{hunn2010} \citep[pg. 20]{hunn2010}
-\end{quotation}
+%\begin{quotation}
+%Although the differences in radio specification have some effect, it is
+%nothing like as great as that of the higher-layer stack.
+%
+%    --- \defcitealias{hunn2010}{Essentials of Short-Range Wireless}
+%    \citetalias{hunn2010} \citep[pg. 20]{hunn2010}
+%\end{quotation}
 
 
 \subsection{IPv6}\label{sub:ipv6}
 
-On the subject of communication, it is important to mention how these wireless
-sensor networks will be connected to the outside world. 
+IPv6, which stands for Internet Protocol Version 6 si the next standard that
+will be used for communication between networked devices around the world. It
+was designed to replace the current IPv4, which most people will be familiar
+with at the moment.
 
-%TODO : ideas
-reachable from anywhere
+One of the key differences between the two versions of the protocol is the size
+of the address pool. IPv4, which most people will be familiar with at this time,
+defines the address of a device as 32 bits, usually represented as four groups
+of eight digits, such as in the form \texttt{128.178.50.12}. Unfortunately, with
+the growing number of internet-connected devices, the pool of available
+addresses is steadily running out. IPv6 is an answer to this concern (among many
+others), as it provides $2^{128}$ possible addresses, namely $3.4 \cdot 10^{38}$
+addresses. 
+
+The technical details of these protocols are beyond the scope of this project.
+We will refer the reader to the innumerable information sources available on the
+web, as well as the book ``Migrating to IPv6'' by Marc
+Blanchet\citep{blanchet2006}, which explains these issues in detail.
+
+A discussion on the use of IPv6 for sensor networks can be found in the book
+``Interconnecting smart objects with IP''\citep[chap. 4]{dunkels2010}, under the chapter
+\emph{IPv6 for Smart Object Networks and the Internet of Things}.
+
+What we shall retain, in the context of this project, is that by using this new
+protocol, we can provide every device with its own indivual address, allowing it
+to be reachable over the global internet. This will allow us to poll sensors
+individually or send commands to devices from anywhere in the world, with no
+need for a local application-specific gateway to translate commands between the
+embedded devices and the outside.
+
+This is one of the promises of 6LoWPAN, which we will cover later in the
+discussion of protocol stacks, in \autoref{sub:6lowpan}
+
 
 
 \section{Topology}\label{sec:topology}
@@ -104,27 +127,27 @@ routers. As their name suggests, \emph{end} nodes are only meant to be at the
 edges of the network and will not relay messages. The black circle is a special
 kind of router node, called the \emph{coordinator}. This node handles the
 creation and management of the network and must always be present.
+\marginpar{note: IEEE~802.15.4 also allows the creation of a star topology, if
+a mesh network is not needed.}
 % TODO : perhaps mention beacon mode
 
-In practice, this topology has two important advantages. First, it allows the
-network to be extended with very little infrastructure cost. Indeed, if two end
-nodes are too far apart, all that is needed is to place one or more router nodes
-in between them. These will then automatically relay data between the neighbour
-nodes. Second, having multiple nodes in the same area increases the robustness
-of the network. When transmitting a message, nodes will auto-discover the most
-efficient path to deliver it. If some nodes fail, or get moved around or removed
-from the network, the nodes will find new paths to deliver the data. 
+In practice, this topology has two important advantages.
 
-\marginpar{re-arrange these two paragraphs to make them more coherent}
-% TODO : rearrange this ^ and that v  to blend them together
+First, it allows the network to be extended with very little infrastructure
+cost. Indeed, if two end nodes are too far apart, all that is needed is to place
+one or more router nodes in between them. These will then automatically relay
+data between the neighbour nodes. For example, it is likely that in a domestic
+environment two nodes will only achieve a range of one storey vertically. If the
+network required fixed infrastructure (as is the case for a WiFi network for
+instance), a dedicated access point would have to be installed at least every
+other storey. However, in the case of a mesh network, the router nodes on each
+floor will be able to relay messages between the floor above and the floor
+below.
 
-These two scenarios are likely occurences in a domestic environment : in the
-first case, it is not unlikely that devices will only achieve a range of one
-storey vertically. If the network required fixed infrastructure (such as in
-a WiFi network for instance), each storey would need to house an access point.
-In the case of a mesh network, the nodes on one floor will relay the messages
-between the floor above and the floor below. 
-
+Second, having multiple devices in the same area will increase the robustness of
+the network. When a message is to be transmitted, nodes will auto-discover the
+most efficient path to deliver it. If some nodes along that path are moved
+around or fail, the network will re-route to avoid the faulty paths. 
 
 
 \section{Operating frequency}\label{sec:frequency}
@@ -145,9 +168,30 @@ grouped in the \ac{ISM} band, which makes them possible to use license-free, but
 also subject to interference from other household devices such as microwave
 ovens.
 
-\subsection{433 MHz}
+\marginpar{Note: the \SI{5}{GHz} band will be omitted as it is currently
+used only for WiFi, from the IEEE~802.11n standard and further}
+At the moment, the most popular choices for wireless networks are the so-called
+``Sub-GHz'' band, and the 2.4 to \SI{2.5}{GHz} band, which will be described
+below.
 
-The 433 Mhz ISM band (\SIrange{433.05}{434.79}{MHz})
+\subsection{Sub-GHz}
+
+The main appeal of the sub-GHz band is that it is less crowded than the
+\SI{2.4}{GHz} band. This is becoming increasingly true with time as we are
+seeing more and more devices in this part of the spectrum. Laptop computers,
+home audio systems, smartphones all contribute to noise in this band, which is
+shared between Wi-Fi, Bluetooth, ZigBee and many other technologies. Therefore
+it can be quite attractive to develop a sensor network which functions outside
+of this frequency range, in hopes that it will be more reliable.
+
+The greatest disadvantage of this frequency range is the lack of a common band
+between regions. If a device is developed for use in Europe, a different version
+will have to be made for the North American market.
+
+
+\subsubsection{\SI{433}{MHz}}
+
+The \SI{433}{MHz} ISM band (\SIrange{433.05}{434.79}{MHz})
 \footnote{\url{http://www.bakom.admin.ch/themen/frequenzen/00652/00653/index.html?lang=en}
 National Frequency Allocation Plan} is a very popular choice for short range,
 low cost devices. Its use is mainly for remote controlled devices, such as light
@@ -171,30 +215,18 @@ were to be used outside of Europe and the Middle East (\emph{Region 1}).
 
 % TODO : why not make our own solution? explain.
 
-\subsection{Sub-GHz}
+\subsubsection{868 / \SI{915}{MHz}}
 
-In addition to the \SI{433}{Mhz} \ac{ISM} band, there is another option,
-commonly referred to as the \emph{Sub-Ghz} band, which is centered around
-\SI{863.5}{Mhz} in Region 1, and \SI{915}{Mhz} in Region 2.
+In addition to the \SI{433}{MHz} \ac{ISM} band, there is another option,
+commonly referred to as the \emph{Sub-GHz} band, which is centered around
+\SI{863.5}{MHz} in Region 1, and \SI{915}{MHz} in Region 2.
 
 % TODO : reword the following paragraph
 Devices operating in this frequency range are becoming increasingly common. Most
 major chip manufacturers are producing chips that can switch between these bands
-( 433 / 868 /\SI{915}{Mhz}).
+( 433 / 868 /\SI{915}{MHz}).
 
-The main appeal of the sub-Ghz band is that it is less crowded than the 2.4 Ghz
-band. This is becoming increasingly true with time as we are seeing more and
-more devices in this part of the spectrum. Laptop computers, home audio systems,
-smartphones all contribute to noise in this band, which is shared between Wi-Fi,
-Bluetooth, ZigBee and many other technologies. Therefore it can be quite
-attractive to develop a sensor network which functions outside of this frequency
-range, in hopes that it will be more reliable.
-
-The greatest disadvantage of this frequency range is the lack of a common band
-between regions. If a device is developed for use in Europe, a different version
-will have to be made for the North American market.
-
-\subsection{2.4 GHz}
+\subsection{\SI{2.4}{GHz}}
 
 This band is currently the most popular part of the spectrum for personal
 electronic devices that must communicate together. Current applications include
@@ -227,9 +259,9 @@ Here, a table comparing the advantages/disadvantages of each tech
     \myfloatalign
   \begin{tabularx}{\textwidth}{Xlll} \toprule
     \tableheadline{Criteria}
-    & \tableheadline{433 MHz}
-    & \tableheadline{868 / 915 MHz}
-    & \tableheadline{2.4 GHz} \\ \midrule
+    & \tableheadline{\SI{433}{MHz}}
+    & \tableheadline{868 / \SI{915}{MHz}}
+    & \tableheadline{\SI{2.4}{GHz}} \\ \midrule
     Region Independent    & Y/N & N & Y \\
     Mesh networking stack & N   & Y & Y \\
     \bottomrule
@@ -254,8 +286,16 @@ technical, and that it's difficult to predict where the market will go in the
 near future, and that the technology for the internet of things has not been
 decided yet. However, it is very likely that it will work only if it is based on
 open standards and if everyone collaborates. This is why we chose IEEE 802.15.4
-on 2.4 GHz, because the same hardware would allow us to make a ZigBee or 6LoWPAN
-compatible network.
+on \SI{2.4}{GHz}, because the same hardware would allow us to make a ZigBee or
+6LoWPAN compatible network.
+
+\subsection{6LoWPAN}\label{sub:6lowpan}
+
+explain how 6LoWPAN\citep{shelby2010} connects to internet via IPv6, what are
+edge routers, why they're interesting (cheap, low overhead)
+
+Mention application profiles, and compare ZigBee to open standards like COAP
+
 
 \section{RF Chips}\label{sec:chips}
 
@@ -299,7 +339,7 @@ have done better?
     if the system is designed to be completely turned off most of the time, then
     a combination of an ultra low power microcontroller with a CC2420 or atmel
     chip would be much more efficient.
-  \item \emph{Antenna diversity} : performance in the 2.4 Ghz band is pretty
+  \item \emph{Antenna diversity} : performance in the \SI{2.4}{GHz} band is pretty
     random (show some examples!). Very sensitive to positioning and orientation.
     Some chips now offer antenna diversity (link to very recent Atmel chip),
     which could be a very interesting option if space permits. Especially if
