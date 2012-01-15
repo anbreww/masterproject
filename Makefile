@@ -6,6 +6,9 @@ OUTPUT = $(BASE_NAME).pdf
 
 all: bib
 
+quick:
+	pdflatex $(TEXSOURCE)
+
 pdf:
 	pdflatex $(TEXSOURCE) && pdflatex $(TEXSOURCE) #&& evince $(OUTPUT)
 

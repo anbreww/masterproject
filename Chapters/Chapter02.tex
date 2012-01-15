@@ -319,16 +319,140 @@ $\nu$ & carrier frequency \\
   \label{tab:frequency-comparison}
 \end{table}
 
-\section{In hindsight}
 
-What have we learned? Would it have been better to choose a different frequency?
+\bigskip
+Based on these facts, we chose to favour a \SI{2.4}{GHz} solution for our
+design. This guarantees that the same product can be used in any region in the
+world, as well as requiring the smallest antenna. At design time, there were
+also more 802.15.4-compatible chips available on the market for \SI{2.4}{GHz}
+than for any other operating frequency, as can be seen from the comparisons in
+\autoref{sec:chips}.
 
 \section{Network stacks}\label{sec:stacks}
 
+Before choosing a hardware solution, we must decide how we wish to communicate
+at the software level. If our communication standard acts as a simple
+remplacement for a serial connection, sending commands is as trivial as sending
+and receiving some characters on a UART interface. If we wish to do anything
+more complex, such as mesh networking, we will have to use a complete networking
+stack, or develop our own.
+
+Since developing our own network stack is beyond the scope of this project, we
+will rely instead on some well-established standards. There is a large amount of
+standards to choose from, so we will only present a few candidates and explain
+the reasoning behind our choices.
+
+It is interesting to note that although there are many software solutions
+available, most are based on one of two standards for the lower-level
+specifications (the physical layer, known as \emph{PHY}, and the link layer,
+referred to as \emph{MAC}, the bottom two layers of the OSI model\footnote{for
+more information : \url{http://en.wikipedia.org/wiki/OSI_model}.}).
+
+The IEEE~802.15 working group focuses on \ac{WPAN}s. Bluetooth uses the
+IEEE~802.15.1 standard, while almost all other stacks referred to here are based
+on IEEE~802.15.4. This implies that unless constrained by licensing requirements
+or physical memory, most of the common networking stacks should be
+interchangeable. As we will see, this does not necessarily mean that all stacks
+are portable across devices, as some are proprietary and only available on
+certain architectures.
+
+\subsection{Bluetooth Low Energy}\label{sub:bluetooth}
+
+TODO : blurb about bluetooth 4.0 and Low Energy, how it consumes less than the
+standards before, which weren't sufficiently low-power for a proper sensor
+network.
+
+Although Bluetooth 4.0 seems like a promising technology, and is already being
+integrated into consumer products such as the iPhone 4S, at the time we looked
+into wireless networking standards for this project, chips compatible with this
+standard were not yet widely available. This option was therefore put to the
+side, but would be worth considering for a new project.
+
+\subsection{ZigBee}\label{sub:zigbee}
+
+ZigBee is a very well-established industry standard for wireless sensor
+networks.\footnote{the ZigBee alliance (\url{http://www.zigbee.org}) has over
+300 industy members.}
+
+It is based on the IEEE~802.15.4 physical standard, and adds several
+useful features such as application profiles and security. It supports several
+topologies, including mesh networking.
+
+The main advantage of this standard is that it is very popular, and therefore
+many chip vendors propose a ZigBee stack compatible with their products. This,
+combined with application profiles, means that in theory it is possible to
+connect multiple devices together from different vendors and ensure that they
+communicate with the same standard.
+
+The biggest disadvantage of the ZigBee protocol stack is that it requires
+a license for commercial use. Some vendors, such as Microchip\footnote{\url{
+http://www.microchipdirect.com/ProductSearch.aspx?Keywords=SW183053 }} require
+a payment in order to use the stack which is compatible with their
+devices.\footnote{at the time of writing, Microchip's ZigBee stack sells for
+\$995.}
+
+\subsection{6LoWPAN}\label{sub:6lowpan}
+
+\ac{6LoWPAN} is an open standard, developed by the \ac{IETF}, which aims to create
+a bridge between low-powered devices and the global internet. It is built on the
+IEEE~802.14.5 standard, and supports multiple topologies, including mesh
+networking. 
+
+One of the distinguishing features of 6LoWPAN is that instead of using
+a proprietary format for data packets, it uses a compressed version of IPv6
+headers. This enables any 6LoWPAN network to be connected to the global internet
+by using a so-called \emph{edge router} : a device which will bridge both
+networks together by compressing/decompressing packets and forwarding them to
+the relevant interface.\footnote{for more details, we recommend \citep[sec.
+6.4]{shelby2010}. For a more thorough introduction to 6LoWPAN, \citep[chap.
+16]{dunkels2010} is a good start.} The advantage of this solution is that it
+   requires little overhead and is therefore well suited to cheap and
+   low-powered devices with limited processing power. Only one edge router is
+   required to connect one cluster of devices to the Internet.
+
+Although vendor support is not yet as good as for ZigBee, many open source
+projects have support for 6LoWPAN on various architectures. The Contiki
+OS\footnote{ \url{http://www.contiki-os.org} } project is an example that is
+often used in academic research. 
+
+Unllike ZigBee, the 6LoWPAN standard itself does not specify application
+profiles. However, several projects are under way to develop an open standard
+for application profiles. The standard currently under development by the IETF
+is named \ac{CoAP}\footnote{ \url{
+http://tools.ietf.org/html/draft-ietf-core-coap-08 }}
+
+
+\subsection{Z-Wave}\label{sub:z-wave}
+
+
+\subsection{MiWi}\label{sub:miwi}
+
+\subsection{Network Stacks : summary}
+
 A table comparing ZigBee (various versions), Z-Wave, Bluetooth, 6LoWPAN etc
 would be nice.
-Explain the mostly subjective reasons for choosing a solution based on open
-standards, IETF approved drafts etc. 
+
+\begin{table}
+    \myfloatalign
+    \makebox[\textwidth][c]{
+  \begin{tabularx}{1.3\textwidth}{Xlllll} \toprule
+    \tableheadline{Criteria}
+    & \tableheadline{ZigBee}
+    & \tableheadline{Bluetooth LE}
+    & \tableheadline{6LoWPAN}
+    & \tableheadline{MiWi}
+    & \tableheadline{Z-Wave}  \\ \midrule
+       Mesh           & Y           & Y        & Y        & N           & Y           \\ 
+       Star           & Y           & Y        & Y        & Y           & -           \\ 
+       License        & Proprietary & -        & Open     & Proprietary & Proprietary \\ 
+       Cross-Platform & Y           & -        & Y        & N           & Somewhat    \\ 
+       Radio          & 802.15.4    & 802.15.1 & 802.15.4 & 802.15.4    & Proprietary \\
+    \bottomrule
+  \end{tabularx}
+  }
+  \caption[Network stack summary]{Network stack summary}
+  \label{tab:stack-comparison}
+\end{table}
 
 Explain that the choice between ZigBee and 6LoWPAN is more subjective than
 technical, and that it's difficult to predict where the market will go in the
@@ -337,18 +461,6 @@ decided yet. However, it is very likely that it will work only if it is based on
 open standards and if everyone collaborates. This is why we chose IEEE 802.15.4
 on \SI{2.4}{GHz}, because the same hardware would allow us to make a ZigBee or
 6LoWPAN compatible network.
-
-\subsection{ZigBee}\label{sub:zigbee}
-
-blargh
-
-\subsection{6LoWPAN}\label{sub:6lowpan}
-
-explain how 6LoWPAN\citep{shelby2010} connects to internet via IPv6, what are
-edge routers, why they're interesting (cheap, low overhead)
-
-Mention application profiles, and compare ZigBee to open standards like COAP
-
 
 \section{RF Chips}\label{sec:chips}
 
