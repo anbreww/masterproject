@@ -6,6 +6,52 @@
 \chapter{Design files}\label{ch:appendix-design}
 
  % TODO : organize this appendix
+ \section{Hardware platform comparisons}
+
+ \begin{landscape}
+ \subsection{Transceiver Chips}\label{sec:table-transceivers}
+
+   \begin{table}[h]
+     \centering
+     \begin{tabularx}{2\textwidth}{l l l p{1.5cm} p{1.5cm} l p{2.5cm} l l}
+        Manufacturer   & Part \#   & Freq       & Price (\$) @ 100 & RX Sens. (dBm) & PWR (RF on), mA & PWR (pin slp), uA & RF Protocols      & Mesh \\ \hline
+        Microchip      & MRF24J40  & 2.4Ghz     & 2.69            & -91            & 22mA @ 0 dBm      & 2                 & 802.15.4 / 2.4Ghz & Y    \\ 
+        Atmel          & AT86RF230 & 2.4Ghz     & 2.06            & -101           & 15.5mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
+        Atmel          & AT86RF231 & 2.4Ghz     & 2.64            & -101           & 13.2mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
+        Atmel          & AT86RF212 & 7/8/900Mhz & 2.92            & -101           & 9.2mA @ 10 dBm    & 0.02              & 802.15.4 / <1Ghz  & Y    \\ 
+        Freescale      & MC13202   & 2.4Ghz     & 2.42            & -91            & 30mA @ 0 dBm      & -                 & -                 & -    \\ 
+        TI             & CC2420    & 2.4Ghz     & 6.6             & -95            & 17.4mA @ 3 dBm    & 20                & -                 & -    \\ 
+        TI             & CC2520    & 2.4Ghz     & 4.62            & -98            & 33.6mA @ 5 dBm    & 0.03              & -                 & -    \\ 
+        Nordic Semi    & nRF24L01+ & 2.4Ghz     & -               & -94            & 11.3 @ 0 dBm      & 0.9               & Proprietary       & Y/N  \\ 
+        Analog Devices & ADF7241   & 2.4Ghz     & 4.18            & -95            & 21.5mA @ 3 dBm    & -                 & 802.15.4          & Y    \\ 
+     \end{tabularx}
+     \caption{Comparison : Transceiver chips}
+     \label{tab:transceiver-comparison}
+   \end{table}
+ \end{landscape}
+
+
+ \begin{landscape}
+ \subsection{System-on-Chips}\label{sec:table-socs}
+
+   \begin{table}[h]
+     \centering
+     \begin{tabularx}{2\textwidth}{l l l p{1.5cm} p{1.5cm} l p{2.5cm} l l}
+        Manufacturer   & Part \#   & Freq       & Price (\$) @ 100 & RX Sens. (dBm) & PWR (RF on), mA & PWR (pin slp), uA & RF Protocols      & Mesh \\ \hline
+        Microchip      & MRF24J40  & 2.4Ghz     & 2.69            & -91            & 22mA @ 0 dBm      & 2                 & 802.15.4 / 2.4Ghz & Y    \\ 
+        Atmel          & AT86RF230 & 2.4Ghz     & 2.06            & -101           & 15.5mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
+        Atmel          & AT86RF231 & 2.4Ghz     & 2.64            & -101           & 13.2mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
+        Atmel          & AT86RF212 & 7/8/900Mhz & 2.92            & -101           & 9.2mA @ 10 dBm    & 0.02              & 802.15.4 / <1Ghz  & Y    \\ 
+        Freescale      & MC13202   & 2.4Ghz     & 2.42            & -91            & 30mA @ 0 dBm      & -                 & -                 & -    \\ 
+        TI             & CC2420    & 2.4Ghz     & 6.6             & -95            & 17.4mA @ 3 dBm    & 20                & -                 & -    \\ 
+        TI             & CC2520    & 2.4Ghz     & 4.62            & -98            & 33.6mA @ 5 dBm    & 0.03              & -                 & -    \\ 
+        Nordic Semi    & nRF24L01+ & 2.4Ghz     & -               & -94            & 11.3 @ 0 dBm      & 0.9               & Proprietary       & Y/N  \\ 
+        Analog Devices & ADF7241   & 2.4Ghz     & 4.18            & -95            & 21.5mA @ 3 dBm    & -                 & 802.15.4          & Y    \\ 
+     \end{tabularx}
+     \caption{Comparison : System-on-Chips}
+     \label{tab:soc-comparison}
+   \end{table}
+ \end{landscape}
 
 \section{Version 2}\label{sec:appendix-v2}
 
