@@ -307,9 +307,9 @@ $\nu$ & carrier frequency \\
     \myfloatalign
   \begin{tabularx}{\textwidth}{Xlll} \toprule
     \tableheadline{Criteria}
-    & \tableheadline{\SI{433}{MHz}}
-    & \tableheadline{868 / \SI{915}{MHz}}
-    & \tableheadline{\SI{2.4}{GHz}} \\ \midrule
+    & \tableheadline{433 MHz}
+    & \tableheadline{868 / 915 MHz}
+    & \tableheadline{2.4 GHz} \\ \midrule
     Region Independent    & Y/N           & N             & Y \\
     Mesh networking stack & Y/N           & Y             & Y \\
     1/4 wave antenna      & \SI{17.3}{cm} & \SI{8.3}{cm}  & \SI{3.06}{cm} \\
@@ -424,15 +424,47 @@ http://tools.ietf.org/html/draft-ietf-core-coap-08 }}
 
 \subsection{Z-Wave}\label{sub:z-wave}
 
+Z-Wave is a popular\footnote{the Z-Wave Alliance (\url{http://www.z-wavealliance.org})
+currently comprises over 160 members.} choice in home automation, so we feel it
+is worth mentioning here. However, it is a completely proprietary standard,
+which can only be used after signing a \ac{NDA} with the original developer,
+Zensys.\footnote{ \url{ http://www.zen-sys.com } }
+
+Z-Wave uses sub-GHz bands (specifically around \SI{900}{MHz}), and uses
+a proprietary hardware link layer.
+
 
 \subsection{MiWi}\label{sub:miwi}
 
+
+MiWi is a lightweight proprietary protocol stack developed by Microchip for
+their range of microcontrollers. It is based on the same hardware layer as
+ZigBee and 6LoWPAN (IEEE~802.15.4), but is not compatible with either of these
+standards. 
+
+Although it can be downloaded for free from the Microchip website\footnote{ \url
+{http://www.microchip.com/MiWi} }, its license only allows it to be used on
+Microchip microcontrollers.
+
+\subsection{ANT}\label{sub:ant}
+
+ANT is a proprietary solution that operates at \SI{2.4}{GHz}, designed for
+wireless sensors and low-power operation. It was not considered at this stage of
+the project, but is becoming popular in sports and monitoring devices.
+Unfortunately, it is completely proprietary (much like Z-Wave), and at present
+only two manufacturers offer ANT devices\footnote{ \url{
+http://www.thisisant.com/pages/products/chip-based-solutions } } : Nordic
+Semiconductor and Texas Instruments.
+
 \subsection{Network Stacks : summary}
 
-A table comparing ZigBee (various versions), Z-Wave, Bluetooth, 6LoWPAN etc
-would be nice.
+\autoref{tab:stack-comparison} provides a quick summary of some of the features
+of the stacks discussed in this section.  For the purpose of this project, we
+wish to design a platform which will be future-proof as much as possible. To
+achieve this, we will try to avoid relying on proprietary standards and
+licensing complications. 
 
-\begin{table}
+\begin{table}[h]
     \myfloatalign
     \makebox[\textwidth][c]{
   \begin{tabularx}{1.3\textwidth}{Xlllll} \toprule
@@ -454,13 +486,16 @@ would be nice.
   \label{tab:stack-comparison}
 \end{table}
 
-Explain that the choice between ZigBee and 6LoWPAN is more subjective than
-technical, and that it's difficult to predict where the market will go in the
-near future, and that the technology for the internet of things has not been
-decided yet. However, it is very likely that it will work only if it is based on
-open standards and if everyone collaborates. This is why we chose IEEE 802.15.4
-on \SI{2.4}{GHz}, because the same hardware would allow us to make a ZigBee or
-6LoWPAN compatible network.
+
+We have chosen to narrow down our choice to ZigBee or 6LoWPAN and use a hardware
+device that can support both. Since both protocols share the same hardware
+requirements, as well as similar memory footprints, it is quite possible to
+develop a platform where ZigBee or 6LoWPAN are interchangeable. This would allow
+us to experiment either with integrating with existing devices, or develop
+IPv6-compatible sensors for the future ``Internet of Things''.
+
+Our first choice will therefore go towards a hardware solution that provides an
+IEEE~802.15.4-compatible MAC and PHY over \SI{2.4}{GHz}.
 
 \section{RF Chips}\label{sec:chips}
 
