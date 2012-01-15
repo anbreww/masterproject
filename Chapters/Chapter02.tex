@@ -212,58 +212,65 @@ Swiss website of the \ac{ITU}
 \subsubsection{\SI{433}{MHz}}
 
 The \SI{433}{MHz} ISM band (\SIrange{433.05}{434.79}{MHz})
-\footnote{\url{http://www.bakom.admin.ch/themen/frequenzen/00652/00653/index.html?lang=en}
-National Frequency Allocation Plan} is a very popular choice for short range,
+ is a very popular choice for short range,
 low cost devices. Its use is mainly for remote controlled devices, such as light
 switches or garage door openers. It is usually used for one-way transmissions.
 
 In Switzerland, the power limit for \SI{433}{MHz} is \SI{1}{mW} at 100\% duty
-cycle, or \SI{10}{mW} at 10\% duty cycle.
+cycle, or \SI{10}{mW} at 10\% duty cycle.\footnote{National Frequency Allocation Plan
+\url{http://www.bakom.admin.ch/themen/frequenzen/00652/00653/index.html?lang=en}}
 
-% TODO : find the OFCOM document with power limits per frequency band
+According to the ITU, this frequency band is only available to Europe and the
+Middle East (Region 1). However, the FCC grants a regional exception that allows
+the \SI{433}{MHz} band to be used in the United States (Region 2).
 
-Although quite common in Europe for cheap home automation devices, it is not
-usable in the United States (known as \emph{Region
-2})\footnote{For more details, refer to the documentation about the
-  International Telecommunication Union regions
-  : \url{http://life.itu.ch/radioclub/rr/art05.htm}.}.
-Therefore, there are few commercial solutions and chips available using this
-frequency. At the time of writing, no widespread networking solution was found
-using this particular frequency band.  Furthermore, any developments made using
-such a device would have to be repeated in another frequency band if the devices
-were to be used outside of Europe and the Middle East (\emph{Region 1}).
-
-% TODO : why not make our own solution? explain.
+Currently though, there doesn't seem to be any widespread use of networking
+stacks operating at this frequency. The IEEE has only recently amended the
+802.15.4 standard to add support for this frequency
+range\footnote{IEEE~802.15.4c\texttrademark{}-2009 : Amendment 2 : Alternative Physical Layer
+Extension to support one or more of the Chinese 314-316~MHz, 430-434~MHz, and
+779-787~MHz bands.}
 
 \subsubsection{868 / \SI{915}{MHz}}
 
-In addition to the \SI{433}{MHz} \ac{ISM} band, there is another option,
-commonly referred to as the \emph{Sub-GHz} band, which is centered around
-\SI{863.5}{MHz} in Region 1, and \SI{915}{MHz} in Region 2.
+The second option that we will consider in the sub-GHz band is around
+\SI{900}{MHz}. Unfortunately, it operates in slightly different frequency ranges
+depending on the target region. In \ac{ITU} Region 1, it is centered around
+\SI{863.5}{MHz}, whereas in ITU Region 2, the devices will operate around
+\SI{915}{MHz}.
+
+This choice is becoming more common and is being heavily marketed by silicon
+chip makers as an alternative to \SI{2.4}{GHz} for mesh networking. The
+IEEE~802.15.4 in its 2003 version allows for 10 communication channels in the
+US, and only one channel in Europe. The 2006 revision extends the number of
+channels to 30 for the US (The European version remains unchanged).
 
 % TODO : reword the following paragraph
 Devices operating in this frequency range are becoming increasingly common. Most
 major chip manufacturers are producing chips that can switch between these bands
-( 433 / 868 /\SI{915}{MHz}).
+( 433 / 868 /\SI{915}{MHz}).\footnote{One example is Texas Instruments' CC1101
+: \url{http://www.ti.com/product/cc1101}.}
 
 \subsection{\SI{2.4}{GHz}}
 
 This band is currently the most popular part of the spectrum for personal
 electronic devices that must communicate together. Current applications include
 WiFi, Bluetooth, and the IEEE 802.15.4 standard, which is the basis for ZigBee
-and \ac{6LoWPAN}, which will be covered elsewhere in this report.
+and \ac{6LoWPAN}, which will be covered in \autoref{sub:6lowpan}.
 
 This popularity has its advantages as well as drawbacks. One of the main
 advantages is that there are a very wide variety of devices now available that
 operate at this frequency. 
 
-% TODO : define ``elsewhere''
-
-In spite of [all this], the author's previous experience with ZigBee devices has
-shown that in a typical domestic environment, with many wireless devices active,
-it is possible to achieve a reliable link between devices in different rooms and
-on different floors. Furthermore, we will be favouring a networking stack that
-can provide mesh capabilities. This will lower the importance of the range, as
+In spite of this caveat, the author's previous experience with ZigBee
+devices\footnote{tests were done using Digi XBee Series 2 transceivers, using
+1/4 wave whip antennas. Although not documented in this report, it was possible
+to establish a reliable communication between three floors.}
+has shown that in a typical domestic environment, with many wireless devices
+active, it is possible to achieve a reliable link between devices in different
+rooms and on different floors. Furthermore, we will be favouring a networking
+stack that can provide mesh capabilities, as explained in
+\autoref{sec:topology}. This will lower the importance of the range, as
 extending the range of the network is a simple matter of adding a cheap repeater
 (router) device at some point in the data path. For example, if communication
 cannot be established between the first and third floors, a router can be placed
@@ -272,8 +279,29 @@ on the second floor to bridge the gap between those two domains.
 
 \section{Comparison}
 
-Here, a table comparing the advantages/disadvantages of each tech
+To sum up this section, all three frequency options are compared in
+\autoref{tab:frequency-comparison}. One criteria was added which was not
+discussed up to this point : antenna size.
 
+Although regulations on emission power and bands change from region to region,
+the size of the antenna is directly linked to the operating frequency. This is
+important to note, as a larger antenna will require more board space, or
+a longer piece of wire, which will take more space inside or around an
+enclosure.
+
+For this comparison, we used a quarter wave antenna, whose length can be
+calculated with the following formula :
+
+\begin{equation*}
+  L = \frac{1}{4} \cdot \frac{c}{\nu},
+\end{equation*}
+
+where
+
+\begin{tabular}[h!]{ll}
+$c$   & speed of light  \\
+$\nu$ & carrier frequency \\
+\end{tabular}
 
 \begin{table}
     \myfloatalign
@@ -282,8 +310,9 @@ Here, a table comparing the advantages/disadvantages of each tech
     & \tableheadline{\SI{433}{MHz}}
     & \tableheadline{868 / \SI{915}{MHz}}
     & \tableheadline{\SI{2.4}{GHz}} \\ \midrule
-    Region Independent    & Y/N & N & Y \\
-    Mesh networking stack & N   & Y & Y \\
+    Region Independent    & Y/N           & N             & Y \\
+    Mesh networking stack & Y/N           & Y             & Y \\
+    1/4 wave antenna      & \SI{17.3}{cm} & \SI{8.3}{cm}  & \SI{3.06}{cm} \\
     \bottomrule
   \end{tabularx}
   \caption[Frequency comparison]{Frequency comparison}
@@ -308,6 +337,10 @@ decided yet. However, it is very likely that it will work only if it is based on
 open standards and if everyone collaborates. This is why we chose IEEE 802.15.4
 on \SI{2.4}{GHz}, because the same hardware would allow us to make a ZigBee or
 6LoWPAN compatible network.
+
+\subsection{ZigBee}\label{sub:zigbee}
+
+blargh
 
 \subsection{6LoWPAN}\label{sub:6lowpan}
 
