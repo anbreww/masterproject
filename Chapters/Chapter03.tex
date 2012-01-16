@@ -529,5 +529,44 @@ heat-resistant adhesive tape.
 
 \section{Cost}\label{sec:cost}
 
-The detailed bill of materials for the lastest version can be found in
-\autoref{ch:appendix-design} under \autoref{sub:bom-v2}.
+\autoref{tab:bom-v2} contains the detailed bill of materials for the latest PCB
+version. It can be found in \autoref{ch:appendix-design} under
+\autoref{sub:bom-v2}.
+
+From this table, we can see that in reasonably large quantities (1000 pieces),
+we have reached our target of providing wireless functionality for less than
+10~CHF.\footnote{as stated in \autoref{sec:cdc}.}
+
+
+\begin{table}
+    \myfloatalign
+  \begin{tabularx}{0.4\textwidth}{ll} \toprule
+    \tableheadline{Components} & \tableheadline{Part} \\
+        \midrule
+        Microcontroller & 57.07\% \\ 
+        LDO             & 20.00\% \\ 
+        Crystal         & 5.68\%  \\ 
+        LED             & 4.05\%  \\ 
+        RF Filter       & 2.05\%  \\ 
+        Inductors       & 1.16\%  \\ 
+        Capacitors      & 0.60\%  \\ 
+        Balun           & 0.22\%  \\ 
+        JST Header      & 0.04\%  \\ 
+        Resistors       & 0.01\%  \\
+  \end{tabularx}
+  \caption[Component price breakdown]{Component price breakdown}
+  \label{tab:price-breakdown}
+\end{table}
+
+We can further break down the costs of the device: \autoref{tab:price-breakdown}
+shows the distribution of costs per type of component. As we can see, the
+microcontroller accounts for over half the cost of all components.
+
+Currently, total component cost adds up to 5.69~CHF per item. This is only the
+raw cost of components from the supplier and does not include PCB fabrication or
+assembly.
+
+If we wish only to use this design to add wireless connectivity to an existing
+project, we may not need the indicator LED or the \SI{3.3}{V} voltage regulator.
+In that case, we may remove them from the design, thus saving 24\% of the total
+component cost. The resulting cost is therefore reduced to 4.27~CHF.

@@ -1,0 +1,78 @@
+%********************************************************************
+% Appendix
+%*******************************************************
+% If problems with the headers: get headings in appendix etc. right
+%\markboth{\spacedlowsmallcaps{Appendix}}{\spacedlowsmallcaps{Appendix}}
+\chapter{Design files}\label{ch:appendix-design}
+
+\section{Version 1}\label{sec:appendix-v1}
+
+\subsection{Schematic}\label{sub:schem-v1}
+
+\includepdf[landscape=true, pages={1}]{gfx/pdfs/schem-v1.pdf}
+
+\subsection{PCB Prints}\label{sub:prints-v1}
+
+\includepdf[landscape=true, pages={1}]{gfx/pdfs/mech-v1.pdf}
+
+\section{Version 2}\label{sec:appendix-v2}
+
+\subsection{Bill of Materials}\label{sub:bom-v2}
+
+ %\begin{landscape}
+ %\subsection{System-on-Chips}\label{sec:table-socs}
+
+   \begin{sidewaystable}[h!]
+    \centering
+    %\makebox[\textwidth][c]{%
+     \begin{tabularx}{1\textwidth}{l X l l l l l}
+        \tableheadline{Comment }
+        & \tableheadline{Designator }
+        & \tableheadline{Description}
+        & \tableheadline{Qty}
+        & \tableheadline{Supplier}
+        & \tableheadline{Part \#}
+        & \tableheadline{Cost/PCB}
+        \\ \hline
+
+        STM32W108CBU64TR & U1                     & STM32W      & 1   & Digi-Key & 497-11411-1-ND         & 3.247             \\ 
+        ADP162           & U4                     & 3.3V LDO    & 1   & Digi-Key & ADP162AUJZ-3.3-R7CT-ND & 0.489             \\ 
+        24Mhz            & X1                     & -           & 1   & Digi-Key & 887-1090-1-ND          & 0.434             \\ 
+        PLCC4            & D1                     & SMD LED RGB & 1   & Mouser   & 941-V1AFKBCJ1M1F17R4   & 0.391             \\ 
+        WE748-351-124    & FLT1                   & RF Filter   & 1   & Digi-Key & 712-1092-1-ND          & 0.347             \\ 
+        7.5nH            & L1                     & -           & 1   & Mouser   & 710-744761075C         & 0.254             \\ 
+        WE748-421-245    & T1                     & RF Balun    & 1   & Digi-Key & 712-1041-1-ND          & 0.151             \\ 
+        2.2uF            & C9, C10, C19           & Capacitor   & 3   & Digi-Key & 490-1586-1-ND          & 0.034             \\ 
+        3.3nH            & L2                     & -           & 1   & Digi-Key & PCD1967CT-ND           & 0.051             \\ 
+        1uF              & C20, C31, C32          & Capacitor   & 3   & Digi-Key & 490-1543-1-ND          & 0.017             \\ 
+        Header 2         & P10                    & 2 Pin JST   & 1   & Digi-Key & 455-1704-ND            & 0.050             \\ 
+        100nF            & C7, C11, C17, C18, C22 & Capacitor   & 5   & Digi-Key & 445-6854-1-ND          & 0.006             \\ 
+        10nF             & C1, C2, C16, C21       & Capacitor   & 4   & Digi-Key & 311-1360-1-ND          & 0.005             \\ 
+        8pF              & C3, C12                & Capacitor   & 2   & Digi-Key & 445-5043-1-ND          & 0.009             \\ 
+        18pF             & C5, C6                 & Capacitor   & 2   & Digi-Key & 445-1272-1-ND          & 0.007             \\ 
+        470nF            & C4                     & Capacitor   & 1   & Digi-Key & 587-1259-1-ND          & 0.012             \\ 
+        220pF            & C8                     & Capacitor   & 1   & Digi-Key & 311-1077-1-ND          & 0.011             \\ 
+        33R              & R9, R10                & Resistor    & 2   & Digi-Key & P33.0HCT-ND            & 0.004             \\ 
+        10R              & R1                     & Resistor    & 1   & Digi-Key & P10.0HCT-ND            & 0.004             \\ 
+        120R             & R8                     & Resistor    & 1   & Digi-Key & 311-120HRCT-ND         & 0.003             \\ 
+        180K 1\%         & R4                     & Resistor    & 1   & Digi-Key & 311-180KHRCT-ND        & 0.003             \\ 
+        1R               & R5                     & Resistor    & 1   & Digi-Key & P1.0GCT-ND             & 0.002             \\ 
+        10K              & R6                     & Resistor    & 1   & Digi-Key & P10.0KHCT-ND           & 0.002             \\
+     \end{tabularx}
+   %}
+     \caption{Bill of Materials, PCB v2.0}
+     \label{tab:bom-v2}
+   \end{sidewaystable}
+%\end{landscape}
+
+\bigskip
+\subsection{Schematic}\label{sub:schem-v2}
+
+\includepdf[landscape=true, pages={1}]{gfx/pdfs/schem-v2.pdf}
+
+\subsection{PCB Prints}\label{sub:prints-v2}
+
+\includepdf[landscape=true, pages={1}]{gfx/pdfs/mech-v2.pdf}
+
+
+

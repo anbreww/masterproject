@@ -3,18 +3,24 @@
 %*******************************************************
 % If problems with the headers: get headings in appendix etc. right
 %\markboth{\spacedlowsmallcaps{Appendix}}{\spacedlowsmallcaps{Appendix}}
-\chapter{Design files}\label{ch:appendix-design}
+\chapter{Hardware platform comparisons}\label{ch:appendix-comparisons}
 
- % TODO : organize this appendix
- \section{Hardware platform comparisons}
+ %\begin{landscape}
+ %\subsection{Transceiver Chips}\label{sec:table-transceivers}
 
- \begin{landscape}
- \subsection{Transceiver Chips}\label{sec:table-transceivers}
-
-   \begin{table}[h]
+   \begin{sidewaystable}[h]
      \centering
-     \begin{tabularx}{2\textwidth}{l l l p{1.5cm} p{1.5cm} l p{2.5cm} l l}
-        Manufacturer   & Part \#   & Freq       & Price (\$) @ 100 & RX Sens. (dBm) & PWR (RF on), mA & PWR (pin slp), uA & RF Protocols      & Mesh \\ \hline
+     \begin{tabularx}{1\textwidth}{l l l p{1.5cm} p{1.5cm} l p{2.5cm} l l}
+        \textsc{Manufacturer}
+        & \textsc{Part \#}
+        & \textsc{Freq}
+        & \textsc{Price (\$) @ 100}
+        & \textsc{RX Sens. (dBm)}
+        & \textsc{PWR (RF on), mA}
+        & \textsc{PWR (pin slp), uA}
+        & \textsc{RF Protocols}
+        & \textsc{Mesh }
+        \\ \hline
         Microchip      & MRF24J40  & 2.4Ghz     & 2.69            & -91            & 22mA @ 0 dBm      & 2                 & 802.15.4 / 2.4Ghz & Y    \\ 
         Atmel          & AT86RF230 & 2.4Ghz     & 2.06            & -101           & 15.5mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
         Atmel          & AT86RF231 & 2.4Ghz     & 2.64            & -101           & 13.2mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
@@ -27,41 +33,79 @@
      \end{tabularx}
      \caption{Comparison : Transceiver chips}
      \label{tab:transceiver-comparison}
-   \end{table}
- \end{landscape}
+   \end{sidewaystable}
+ %\end{landscape}
 
 
- \begin{landscape}
- \subsection{System-on-Chips}\label{sec:table-socs}
+ %\begin{landscape}
+ %\subsection{System-on-Chips}\label{sec:table-socs}
 
-   \begin{table}[h]
+   \begin{sidewaystable}[h]
      \centering
-     \begin{tabularx}{2\textwidth}{l l l p{1.5cm} p{1.5cm} l p{2.5cm} l l}
-        Manufacturer   & Part \#   & Freq       & Price (\$) @ 100 & RX Sens. (dBm) & PWR (RF on), mA & PWR (pin slp), uA & RF Protocols      & Mesh \\ \hline
-        Microchip      & MRF24J40  & 2.4Ghz     & 2.69            & -91            & 22mA @ 0 dBm      & 2                 & 802.15.4 / 2.4Ghz & Y    \\ 
-        Atmel          & AT86RF230 & 2.4Ghz     & 2.06            & -101           & 15.5mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
-        Atmel          & AT86RF231 & 2.4Ghz     & 2.64            & -101           & 13.2mA @ 3 dBm    & 0.02              & 802.15.4 / 2.4Ghz & Y    \\ 
-        Atmel          & AT86RF212 & 7/8/900Mhz & 2.92            & -101           & 9.2mA @ 10 dBm    & 0.02              & 802.15.4 / <1Ghz  & Y    \\ 
-        Freescale      & MC13202   & 2.4Ghz     & 2.42            & -91            & 30mA @ 0 dBm      & -                 & -                 & -    \\ 
-        TI             & CC2420    & 2.4Ghz     & 6.6             & -95            & 17.4mA @ 3 dBm    & 20                & -                 & -    \\ 
-        TI             & CC2520    & 2.4Ghz     & 4.62            & -98            & 33.6mA @ 5 dBm    & 0.03              & -                 & -    \\ 
-        Nordic Semi    & nRF24L01+ & 2.4Ghz     & -               & -94            & 11.3 @ 0 dBm      & 0.9               & Proprietary       & Y/N  \\ 
-        Analog Devices & ADF7241   & 2.4Ghz     & 4.18            & -95            & 21.5mA @ 3 dBm    & -                 & 802.15.4          & Y    \\ 
+     \begin{tabularx}{0.9\textwidth}{l l l p{1.5cm} l l  p{1.3cm} p{1.3cm} l l}
+      \textsc{Manufacturer}
+      & \textsc{Part \#}
+      & \textsc{Arch}
+      & \textsc{Price (\$) @ 100}
+      & \textsc{Flash}
+      & \textsc{RAM}
+      & \textsc{Analog Comp}
+      & \textsc{CPU Mhz}
+      & \textsc{DMA}
+      & \textsc{MAC}
+ \\ \hline
+        Atmel        & ATMEGA128RFA1 & 8 bit AVR       & 5.28    & 128K     & 16K  & Y &  16      & N     & N   \\ 
+        Freescale    & MC13213       & 8 bit           & 3.8     & 60K      & 4K   & N &  40      & -     & -   \\ 
+        TI           & CC2430        & 8 bit / MSP430  & 9.25    & 128K     & 8K   & Y &  32      & -     & -   \\ 
+        TI           & CC2431        & 8 bit           & 11.61   & 128K     & 8K   & Y &  32      & -     & -   \\ 
+        TI           & CC253x        & 8 bit / 8051    & 7       & 128-256K & 8K   & Y &  32      & Y (5) & N   \\ 
+        ST           & STM32W        & 32 bit ARM      & 4.24    & 64K      & 8K   & N &  24      & Y     & Y   \\ 
+        ST           & STM32W108xB   & 32 bit ARM      & 5.22    & 128K     & 8K   & N &  24      & Y     & Y   \\ 
+        Jennic (NXP) & JN5148        & 32 bit RISC     & 6.14    & 128K     & 128K & Y &  32      & N     & -   \\ 
+        TI           & CC430F6125    & 8 bit / MSP430  & 5.6     & 8-32K    & 2-4K & Y &  20      & Y     & N   \\ 
+        RadioPulse   & MG2455        & 8 bit / 8051    & N/A     & 4K       & 64K  & - &  -       & -     & -   \\ 
+        Ember        & EM250         & 16 bit RISC     & 4.92    & 128K     & 5K   & - &  -       & -     & -   \\ 
+        Ember        & EM351         & 32 bit ARM (M3) & 5.13    & 128K     & 12K  & Y &  24      & Y     & -   \\ 
+        Ember        & EM357         & 32 bit ARM (M3) & 5.33    & 192K     & 12K  & Y &  24      & Y     & -   \\ 
+        Nordic Semi  & nRF24LE1      & 8051            & N/A     & 16K      & 1K   & - &  16      & -     & -   \\
+
      \end{tabularx}
-     \caption{Comparison : System-on-Chips}
+     \caption{Comparison : System-on-Chips, part 1}
      \label{tab:soc-comparison}
-   \end{table}
- \end{landscape}
+   \end{sidewaystable}
 
-\section{Version 2}\label{sec:appendix-v2}
+   \begin{sidewaystable}[h]
+     \centering
+     \begin{tabularx}{0.95\textwidth}{l l l p{1.5cm} p{3.5cm} p{2.1cm} p{1.8cm} l l}
+       \textsc{Manufacturer}
+       & \textsc{Part \#}
+       & \textsc{Freq}
+       & \textsc{RX Sens. [dBm]}
+       & \textsc{Power (RF on) [mA]}
+       & \textsc{Power (sleep) [uA]}
+       & \textsc{RTC sleep [uA]}
+       & \textsc{Radio}
+       & \textsc{Mesh}
+        \\ \hline
 
-\subsection{Bill of Materials}\label{sub:bom-v2}
+        Atmel        & ATMEGA128RFA1 & 2.4Ghz & -100    & 14.5mA @ 3dBm    & 0.25   & -     & 802.15.4 & Y      \\ 
+        Freescale    & MC13213       & 2.4Ghz & -92     & 35mA @ 0 dBm     & 1      & 35    & 802.15.4 & Y      \\ 
+        TI           & CC2430        & 2.4Ghz & -92     & 27mA @ 0 dBm     & 0.5    & -     & 802.15.4 & Y      \\ 
+        TI           & CC2431        & 2.4Ghz & -92     & 27mA @ 0 dBm     & 0.05   & -     & 802.15.4 & Y      \\ 
+        TI           & CC253x        & 2.4Ghz & -97     & 33.5mA @ 4.5 dBm & 0.4    & 1     & 802.15.4 & Y      \\ 
+        ST           & STM32W        & 2.4Ghz & -100    & 31mA @ 3 dBm     & 0.4    & 0.8   & 802.15.4 & Y      \\ 
+        ST           & STM32W108xB   & 2.4Ghz & -100    & 31mA @ 3 dBm     & 0.4    & 0.8   & 802.15.4 & Y      \\ 
+        Jennic (NXP) & JN5148        & 2.4Ghz & -95     & 17.5mA @ 2.5 dBm & 0.1    & 1.25  & 802.15.4 & Y      \\ 
+        TI           & CC430F6125    & <1Ghz  & -117    & -                & 1      & 2     & 802.15.4 & Y      \\ 
+        RadioPulse   & MG2455        & 2.4Ghz & -98     & 31mA @ 4 dBm     & 9      & -     & 802.15.4 & Y      \\ 
+        Ember        & EM250         & 2.4Ghz & -98     & 33mA @ 5 dBm     & 1      & -     & 802.15.4 & Y      \\ 
+        Ember        & EM351         & 2.4Ghz & -102    & 30mA @ 3 dBm     & 0.4    & 0.8   & 802.15.4 & Y      \\ 
+        Ember        & EM357         & 2.4Ghz & -102    & 30mA @ 3 dBm     & 0.4    & 0.8   & 802.15.4 & Y      \\ 
+        Nordic Semi  & nRF24LE1      & 2.4Ghz & -94     & 14mA @ 4dBm      & 0.5    & -     & proprietary & -   \\
 
-\subsection{Schematic}\label{sub:schem-v2}
-
-\subsection{PCB Prints}\label{sub:prints-v2}
-
-\subsubsection{Top Layer}\label{sub2:top-v2}
-\subsubsection{Bottom Layer}\label{sub2:bottom-v2}
-
+     \end{tabularx}
+     \caption{Comparison : System-on-Chips, part 2}
+     \label{tab:soc-comparison-2}
+   \end{sidewaystable}
+ %\end{landscape}
 
