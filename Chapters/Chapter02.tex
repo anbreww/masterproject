@@ -14,9 +14,10 @@ are desirable:
 
 \begin{itemize}
   \item \emph{Universal} :
-    The standards used to communicate must be universal and available worldwide,
+    The frequency used to communicate must be universal and available worldwide,
     so that the same hardware can be used anywhere without the need to develop
-    region-specific versions
+    region-specific versions. Emission power must also comply to regional
+    regulations in all areas where the design is to be used.
 
   \item \emph{Popular network stack} : 
     The network stack should ideally be a popular industry standard. This will
@@ -56,7 +57,8 @@ are desirable:
 IPv6, which stands for Internet Protocol Version 6 si the next standard that
 will be used for communication between networked devices around the world. It
 was designed to replace the current IPv4, which most people will be familiar
-with at the moment.
+with at the moment.\footnote{For more information, see \url{
+http://en.wikipedia.org/wiki/IPv4_address_exhaustion }.}
 
 One of the key differences between the two versions of the protocol is the size
 of the address pool. IPv4, which most people will be familiar with at this time,
@@ -129,7 +131,6 @@ kind of router node, called the \emph{coordinator}. This node handles the
 creation and management of the network and must always be present.
 \marginpar{note: IEEE~802.15.4 also allows the creation of a star topology, if
 a mesh network is not needed.}
-% TODO : perhaps mention beacon mode
 
 In practice, this topology has two important advantages.
 
@@ -154,10 +155,11 @@ around or fail, the network will re-route to avoid the faulty paths.
 
 The first choice to be made is the frequency of operation. This is quite an
 important topic as it will impose restrictions on the type of networking
-protocols that will be available. Some frequency bands can cause interference
-with common household equiment more than others. Furthermore, some choices also
-limit the target markets : some frequency bands are not available in all
-countries around the world or require special licenses.
+protocols that will be available, so long as we wish to comply with current
+standards. Some frequency bands can cause interference with common household
+equiment more than others. Furthermore, some choices also limit the target
+markets : some frequency bands are not available in all countries around the
+world or require special licenses.
 
 We will cover only the most common choices and explain our reasoning for each
 one. Since the devices under development are to be used in a domestic
@@ -225,11 +227,13 @@ Middle East (Region 1). However, the FCC grants a regional exception that allows
 the \SI{433}{MHz} band to be used in the United States (Region 2).
 
 Currently though, there doesn't seem to be any widespread use of networking
-stacks operating at this frequency. The IEEE has only recently amended the
-802.15.4 standard to add support for this frequency
-range\footnote{IEEE~802.15.4c\texttrademark{}-2009 : Amendment 2 : Alternative Physical Layer
-Extension to support one or more of the Chinese 314-316~MHz, 430-434~MHz, and
-779-787~MHz bands.}
+stacks operating at this frequency.\footnote{There is no technical obligation to
+use a stack explicitly designed for a given frequency, but doing so would limit
+the ability to interact with other devices following the same standard.} The
+IEEE has only recently amended the 802.15.4 standard to add support for this
+frequency range.\footnote{IEEE~802.15.4c\texttrademark{}-2009 : Amendment 2 :
+Alternative Physical Layer Extension to support one or more of the Chinese
+314-316~MHz, 430-434~MHz, and 779-787~MHz bands.}
 
 \subsubsection{868 / \SI{915}{MHz}}
 
@@ -245,11 +249,10 @@ IEEE~802.15.4 in its 2003 version allows for 10 communication channels in the
 US, and only one channel in Europe. The 2006 revision extends the number of
 channels to 30 for the US (The European version remains unchanged).
 
-% TODO : reword the following paragraph
-Devices operating in this frequency range are becoming increasingly common. Most
-major chip manufacturers are producing chips that can switch between these bands
-( 433 / 868 /\SI{915}{MHz}).\footnote{One example is Texas Instruments' CC1101
-: \url{http://www.ti.com/product/cc1101}.}
+Devices operating in this frequency range are becoming increasingly common and
+it seems now that most major chip manufacturers are producing chips that can
+switch between these bands ( 433 / 868 /\SI{915}{MHz}).\footnote{One example is
+Texas Instruments' CC1101 : \url{http://www.ti.com/product/cc1101}.}
 
 \subsection{\SI{2.4}{GHz}}
 
@@ -332,10 +335,11 @@ than for any other operating frequency, as can be seen from the comparisons in
 
 Before choosing a hardware solution, we must decide how we wish to communicate
 at the software level. If our communication standard acts as a simple
-remplacement for a serial connection, sending commands is as trivial as sending
-and receiving some characters on a UART interface. If we wish to do anything
-more complex, such as mesh networking, we will have to use a complete networking
-stack, or develop our own.
+remplacement for a serial connection, sending commands is a relatively trivial
+matter, requiring only to send and receive minimal amounts of data (a few
+characters) over a serial interface.  If we wish to do anything more complex,
+such as mesh networking, we will have to use a complete networking stack, or
+develop our own.
 
 Since developing our own network stack is beyond the scope of this project, we
 will rely instead on some well-established standards. There is a large amount of
@@ -358,9 +362,11 @@ certain architectures.
 
 \subsection{Bluetooth Low Energy}\label{sub:bluetooth}
 
-TODO : blurb about bluetooth 4.0 and Low Energy, how it consumes less than the
-standards before, which weren't sufficiently low-power for a proper sensor
-network.
+Bluetooth 4.0 is the latest iteration of the Bluetooth specification. Although
+its previous incarnations were not very well suited to being used in sensor
+networks (partly because of their power requirements, and relatively long
+start-up times.)\footnote{Bluetooth 2.1 set-up time can be up to 6 seconds,
+while Bluetooth 4.0 promises times under \SI{3}{ms}. }
 
 Although Bluetooth 4.0 seems like a promising technology, and is already being
 integrated into consumer products such as the iPhone 4S, at the time we looked
@@ -513,8 +519,6 @@ released under an open source license in the fourth quarter of 2011
 : \url{http://www.eetimes.com/electronics-news/4216038/Home-or-commercial-lighting-comes-under-Internet-control}
 but it's still not available today}
 
-Now we'll want to somehow format the huge excel table into something we can
-include in a report\ldots hmmm.
 
 % TODO : incorporate this somewhere
 
@@ -533,12 +537,21 @@ have done better?
 
 \begin{itemize}
   \item \emph{Power consumption} : original specifications called for an audio
-    amplification stage, which would have used tens of micro Amps.
-    % TODO : get proper data
-    Therefore a difference between 400nA and 20nA was not significant. However,
-    if the system is designed to be completely turned off most of the time, then
-    a combination of an ultra low power microcontroller with a CC2420 or atmel
-    chip would be much more efficient.
+    amplification stage, which would have used tens of micro amperes. As
+    a reference, the MAX4468 micro power amplifier which was considered for this
+    application and used in the first version of the PCB requires between
+    \SIrange{24}{50}{\micro\ampere}. Compared to this, a difference between
+    400nA and 20nA was not significant. However, if the system is designed to be
+    completely turned off most of the time, then a combination of an ultra low
+    power microcontroller with a CC2420 or atmel chip would be more efficient.
+    However, even the most power-efficient devices on the market currently offer
+    % TODO : actually 700 to 1200 nA in RTC sleep
+    performance similar to the STM32W. Texas Instruments' MSP430F2001 for
+    example requires \SI{500}{nA} in idle mode\footnote{ \url{
+    http://www.ti.com/product/msp430f2001 }}, which is in the same order of
+    magnitude as the \SI{800}{nA} quoted for the STM32W108. In this case, the
+    duty cycle between idle and transmitting is more important than the power
+    savings from one chip to another.
   \item \emph{Antenna diversity} : performance in the \SI{2.4}{GHz} band is pretty
     random (show some examples!). Very sensitive to positioning and orientation.
     Some chips now offer antenna diversity (link to very recent Atmel chip),
