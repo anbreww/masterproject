@@ -505,13 +505,57 @@ IEEE~802.15.4-compatible MAC and PHY over \SI{2.4}{GHz}.
 
 \section{RF Chips}\label{sec:chips}
 
-Here, we'll talk about the various microcontrollers on the market
+Once the choice was made of which operating frequency and protocol stack would
+be used, the manufacturer's data on compatible chips was compiled, to allow us
+to compare all possibilities easily. 
+
+These comparison tables can be found in \autoref{ch:appendix-comparisons}. The
+first table contains a list of transceivers, while the next table, split into
+two parts, contains a list of system-on-chips.
 
 \subsection{Multi-chip solution vs. System-on-Chip}
 
-Do a cost comparison. 
-Explain technical advantages (notably space saved on PCB) and disadvantages
-(software is more complex, less separation of application vs stack).
+In our comparison, we will note two different categories of chips. The first
+category, which we will refer to simply as ``transceivers'', provide a wireless
+transceiver on an external interface. Mostly, these will manage the MAC and PHY
+of the hardware standard. The rest of the stack (from network layer to
+application layer)\footnote{For readers unfamiliar with the OSI model, more
+information can be found here : \url{ http://en.wikipedia.org/wiki/OSI_model }.}
+must be managed by an external microcontroller. 
+
+This means that a design using a transceiver chip requires at least two hardware
+chips : the main application microcontroller and the transceiver.
+
+The second category contains system-on-chips. These devices integrate
+a transceiver and a microcontroller in the same package. Each solution has
+advantages and disadvantages.
+
+\paragraph{Board space} 
+
+Since the system-on-chip (SoC) only needs one physical package, it usually
+occupies less board space. If the application calls for a very tight design, it
+would be preferable to opt for a SoC to save space.
+
+\paragraph{Cost} 
+
+SoCs cost more than transceivers, but transceivers require an additional
+microcontroller to function. As a result, we can expect the cost of the
+microcontroller+transceiver combo to be fixed if we choose a SoC, whereas in the
+case of separate components, the cost will vary depending on the microcontroller
+that is chosen for the application
+
+\paragraph{Flexibility} 
+
+The biggest drawback with an SoC is the lack of flexibility that it imposes on
+the design. If we wish to use a SoC, we must ensure that it posesses enough
+processing power for all potential applications, as changing the architecture
+may require a complete redesign.  If the system is made of two seperate parts,
+it is possible to replace the microcontroller without modifying the RF part of
+the design.
+
+\paragraph{Complexity} 
+<++>
+
 
 Mention some advantages like the over-the-air bootloader for STM32 and the
 Jennet-IP solution (and why we couldn't use it!) \footnote{Jennet IP was to be
@@ -529,6 +573,38 @@ a Cortex M3 core to read a temperature sensor or turn off a light. However, some
 application may call for more processing power, such as an M4 or an FPGA, in
 which case the processing power of the STM32W will be wasted, and it will simply
 be added to the cost for nothing.
+
+\subsection{Final choice}
+
+In the end, the solution selected for this application was the STM32W108
+System-on-Chip, for the following reasons.
+
+\paragraph{Architecture} : the STM32W108 is based on a 32-bit ARM core, which
+operates at a frequency up to 24 MHz. It is the only solution in this comparison
+to offer a single-cycle Multiply and Accumulate instruction (see
+\autoref{tab:soc-comparison}).
+
+\paragraph{Peripherals} : the STM32W series includes an analog comparator which
+can trigger device wake-up (which was required as part of the project
+specifications), as well as a \ac{DMA}, which helps speed up calculations and
+lessen the load on the processing core.
+
+\paragraph{RF Performance} : RF performance and associated power consumption are
+on par with Atmel's ATMEGA128RFA1 and Texas Instruments' CC2530. Specs given in
+the comparison table do not take into account ``boost mode'', which is said to
+add approximately \SI{1}{dBm} to the receiver's sensitivity and \SI{0.5}{dBm} to
+the transmitter.
+
+The choice between the ATMEGA128RFA1, CC2530 and the STM32W was made mainly on
+the grounds of architectural differences and price.
+
+The ATMEGA, being an 8 bit microcontroller with no MAC instruction or DMA, would
+not be sufficient to fulfill the requirement for an FFT calculation. If this was
+not required by the target application, this would be an interesting choice.
+
+% TODO : verify these (how many DMA channels?)
+The CC2530 does include a DMA channel, but no MAC instruction. It is however
+more expensive than the STM32W108. 
 
 \section{Observations}
 

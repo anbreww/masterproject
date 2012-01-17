@@ -87,6 +87,16 @@ Channel frequency is defined as $Fc = 2405 + 5 (k-11)$ in Megaherz, for $k
 Illustrate the test setup, clearly indicate measuring distance. Test for various
 orientations.
 
+\begin{figure}[htb]
+  \begin{center}
+    \makebox[\textwidth][c]{
+    \includegraphics[width=1\textwidth]{gfx/photos/test-setup}
+    }
+  \end{center}
+  \caption{RF Power Test Setup}
+  \label{fig:power-test-setup}
+\end{figure}
+
 In order to compare the performance of various antenna choices, we used a simple
 test that could be run on all STM32W devices in our posession. Using the
 following code, the device under test was made to emit a continuous tone at
@@ -212,7 +222,8 @@ a non-metallic support. The device under test is then placed at the other end of
 the setup, its feedline against the support. In this orientation, the plane
 containing the PCB is normal to the monopole antenna.
 
-In the second test, the device is placed at the same distance, turned 90° so
+In the second test, the device is placed at the same distance, turned
+ninety degrees so
 that the antenna is now ``above'' the device. Each test was done in the same way
 for both devices under test.
 

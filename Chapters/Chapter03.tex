@@ -20,13 +20,12 @@ design provided by ST Microelectronics, we believe it is possible to achieve
 a better design than the reference. See \autoref{ch:performance} for the
 results.
 
-% TODO : images here
 \begin{figure}[bth]
   \myfloatalign
   \subfloat[Version 1]
   {\includegraphics[width=.45\linewidth]{gfx/base-node_photo_lores}}
   \subfloat[Version 2]
-  {\includegraphics[width=.45\linewidth]{gfx/frontpage}}
+  {\includegraphics[width=.45\linewidth]{gfx/photos/v2-alone}}
   \caption{Base platforms}
   \label{fig:base-platforms}
 \end{figure}
@@ -409,7 +408,6 @@ for debug only. If it is required as an indicator, we recommend using very short
 pulses to reduce the average power consumption of the indicator. If necessary,
 the resistor values can also be adjusted.
 
-% TODO : measure consumption per colour and describe the procedure.
 % TODO : mention the joule losses in the resistors?
 
 \subsection{Debugging}\label{sub:debugging}
@@ -423,9 +421,9 @@ See \url{http://www.st.com/stm32-discovery} for details.}
 \begin{figure}[bth]
   \myfloatalign
   \subfloat[Version 1 Debug Link]
-  {\includegraphics[width=.45\linewidth]{gfx/placeholder-200x200}}
+  {\includegraphics[height=.30\linewidth]{gfx/photos/debug-v1}}
   \subfloat[Version 2 Debug Link]
-  {\includegraphics[width=.45\linewidth]{gfx/placeholder-200x200}}
+  {\includegraphics[height=.30\linewidth]{gfx/photos/debug-v2}}
   \caption{ST-Link Debugger Connections}
   \label{fig:st-link}
 \end{figure}
@@ -513,6 +511,14 @@ a microcontroller output. When \SI{3}{V} are applied to it, the triac will allow
 current to flow through the right hand side of the circuit. The mains power and
 load are to be connected respectively to P1 and P2. A standard \SI{5x20}{mm}
 fuse offers a simple protection against short circuit.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{gfx/photos/triac-module}
+  \end{center}
+  \caption{Triac Module}
+  \label{fig:triac-module-photo}
+\end{figure}
 
 It is important to be cautious when working with mains power. It is best to use
 a decoupling transformer, to separate oneself from the live mains, as well as
