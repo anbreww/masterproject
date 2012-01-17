@@ -117,11 +117,10 @@ encounter, and a comparison between those designs.
 
 \subsubsection{Chip Antenna}
 
-% TODO : include a photo of the starter kit to compare
-
 A chip antenna requires little board space, usually less than a PCB trace
-antenna. However, they are difficult to tune if needed, and increase the cost of
-the overall bill of materials.
+antenna.\citep{slyt296} However, they are difficult to tune if
+needed\citep{DropoutGuide}, and increase the cost of the overall bill of
+materials.
 
 \begin{figure}[bth]
   \begin{center}
@@ -130,7 +129,6 @@ the overall bill of materials.
   \caption{Device with a chip antenna}
   \label{fig:chip-antenna}
 \end{figure}
-\marginpar{TODO : replace these pictures with photos of my own devices}
 
 The example kit (\emph{STM32W-RFCKIT}) contains both a board with a chip antenna
 and a PCB trace antenna, so it will be possible to make some comparisons between
@@ -219,6 +217,15 @@ are as follows:
 In summary, there is no ``ideal'' choice for an antenna in a wireless project.
 Each model described previously has its own advantages and disadvantages. The
 choice will mostly be a compromise between performance, price and board space.
+
+As an example, \autoref{fig:trace-antenna} shows a commercial Bluetooth module
+with a meander antenna. This design occupies much less PCB space than the design
+used in this project, but in this precise case offers far worse performance,
+with an indoor range of \SIrange{3}{4}{metres}. This is an acceptable compromise
+for a Bluetooth computer peripheral, as these are expected to be used in the
+vicinity of the computer, but not for a sensor network which we expect to
+communicate between floors of a house.
+
 \autoref{tab:antennas}, taken from a Texas Instruments application
 note\citep{slyt296}, does a decent job of summing up the differences between
 different types of antennas, for quick reference.
@@ -262,30 +269,19 @@ antennas''.
   \label{tab:antennas}
 \end{table}
 
-% TODO 
-Explain some details of the design, explain choice for components, say a few
-words about the audio part?
+Despite the fact that the manufacturer provided documentation on the design of
+a PCB antenna, some confusion remained. We noted for example that one document
+suggested that ``\emph{The STM32W108 Reference Design is built on a 4-layer,
+FR-4 epoxy PCB}''\citep{AN3206}. However, application note AN3359\citep{AN3359}
+as well as the Gerber files available for download from the manufacturer's
+website suggest using a 2-layer PCB. Likewise, one source recomments the use of
+0603 size passive components while the other indicates the use of 0402. 
 
-We used application note about PCB design : \cite{AN3206} as well as
-\cite{AN3359} for antenna design
-
-Note some confusion about specifications : ``\emph{The STM32W108 Reference
-Design is built on a 4-layer, FR-4 epoxy PCB}''\citep{AN3206}. However, the
-Gerber files available for download from the website as well as the directives
-given in AN3359\cite{AN3359} suggest using a 2-layer PCB.
-
-Used advice from \cite{DropoutGuide} since we couldn't get any help from EPFL
-experts.
+For the purpose of this project, we settled on a \SI{0.8}{mm} thickness 2-layer
+FR-4 PCB, and used 0603 size components. 
 
 
 \section{Version 2}
-
-% TODO 
-Explain why we dropped the audio part.
-% TODO 
-Complete reasoning for each pin of the expansion port.
-% TODO 
-Why we dropped the programming connector.
 
 \begin{figure}[htb]
   \begin{center}
@@ -307,31 +303,19 @@ power, drawn from the \SI{3.3}{V} regulator on the board.
 \begin{table}
     \myfloatalign
   \begin{tabularx}{\textwidth}{llX} \toprule
-    \tableheadline{Pin \#} & \tableheadline{Port Number}
+    \tableheadline{Pin \#} & \tableheadline{Name}
     & \tableheadline{Function} \\ \midrule
     1   & +3.3V   & Power from regulator    \\
     2   & GND     & Ground Connection       \\
     3   & PC4     & SWDIO : Debug Data      \\
     \midrule
     4   & SWCLK   & SWCLK : Debug Clock     \\
-    5   & PA0     & PWM4        \\
+    5   & PA0     & PWM3        \\
     6   & PB0     & GPIO 3    \\
     \midrule
     7   & PA6     & Timer1 Channel 3        \\
     8   & PA7     & Timer1 Channel 4     \\
     9   & PB3     & GPIO 1 / CTS    \\
-
-%    \bottomrule
-%  \end{tabularx}
-%  \caption[I/O Connector]{I/O Connector}
-%  \label{tab:io-connector}
-%\end{table}
-%
-%\begin{table}
-%    \myfloatalign
-%  \begin{tabularx}{\textwidth}{llX} \toprule
-%    \tableheadline{Pin \#} & \tableheadline{Port Number}
-%    & \tableheadline{Function} \\ \midrule
     \midrule
     10   & PB4     & GPIO 2 / RTS        \\
     11   & PB1     & UART TX     \\
@@ -363,10 +347,10 @@ functionality is as follows:
   \item \emph{Timer 1} : Two channels of timer 1 are provided. These can be used
     as output compare channels for \ac{PWM} or as input captures.
   \item \emph{Timer 2} : All four channels of timer 2 are broken out to the
-    expansion port. This allows the user to perform an input capture on all four
-    channels of the same timer, for instance to measure the distance between
-    peaks on separate channels with a high resolution. These channels can also
-    be used as \ac{PWM} outputs.
+    expansion port and referred to as PWM0 to PWM3.  This allows the user to
+    perform an input capture on all four channels of the same timer, for
+    instance to measure the distance between peaks on separate channels with
+    a high resolution. These channels can also be used as \ac{PWM} outputs.
 
     Furthermore, pins 14 and 16 can be used for $I^{2}C$. All four timer 2 pins
     can serve the function of an SPI controller.
@@ -374,8 +358,11 @@ functionality is as follows:
     \emph{ST-Link} device or by JTAG. The \emph{ST-Link} was chosen for this
     design as it requires only two pins to function. Connecting the board to the
     debugger is covered in \autoref{sub:debugging}.
-    % TODO : make a section about programming, debugging, the connector etc
-  \item \emph{<++>} : <++>
+  \item \emph{ADC} : Pins ADC0 to ADC2 provide inputs to the analog to digital
+    converter. Its principal specifications can be found in \autoref{sub:adc}.
+  \item \emph{UART} : pins 11 and 12 can be used as a serial (UART) interface.
+    These allow the device to communicate easily with a computer to print out
+    debug messages. Adjacent pins 9 and 10 can be used for flow control.
 \end{itemize}
 
 Naturally, each of these pins can also be used as general purpose inputs or
@@ -408,8 +395,6 @@ for debug only. If it is required as an indicator, we recommend using very short
 pulses to reduce the average power consumption of the indicator. If necessary,
 the resistor values can also be adjusted.
 
-% TODO : mention the joule losses in the resistors?
-
 \subsection{Debugging}\label{sub:debugging}
 
 Programming and debugging of the platform can be done using an \emph{ST-Link}
@@ -432,7 +417,19 @@ See \url{http://www.st.com/stm32-discovery} for details.}
 discovery kit and the development platform. Pin number one on the platform
 refers to the upper left hand corner of the 18-pin connector, while pin one on
 the discovery kit is the upper-most pin, closest to the USB connector. Both
-versions of the connectors are illustrated in \autoref{fig:st-link}.
+versions of the connectors are illustrated in \autoref{fig:st-link}. Although
+the connector contains two debug pins, one of these can be used as a general
+purpose input/output pin.
+
+\paragraph{Note}
+As shown in \autoref{fig:st-link}, between versions 1 and 2, the dedicated debug
+connector was dropped, in favour of adding two pins to the fine-pitch general
+purpose connector. This was done mainly to save board space, as the programming
+connector will not often be used in a production device. Furthermore, ST
+Microelectronics provide an over-the-air bootloader which would allow the
+devices to be programmed wirelessly after the bootloader has been installed. The
+programming pins would therefore only be needed once.
+
 
 
 \begin{table}[tbh]
@@ -458,6 +455,10 @@ utility.\footnote{The ST-Link Utility can be downloaded from
 
 
 
+
+\subsection{Analog to Digital Converter}\label{sub:adc}
+
+TODO : include specs for ADC
 \section{Possible future improvements}
 
 If the goal is to minimize board size, there are a few straightforward

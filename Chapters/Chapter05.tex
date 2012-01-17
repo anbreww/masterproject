@@ -14,6 +14,38 @@ Here we'll discuss some compromises that were made. Notably:
     cheaper, more powerful and/or more energy efficient.
 \end{itemize}
 
+
+TODO : integrate this info into this chapter
+
+What we've deduced from the project : was it the right choice? What could we
+have done better?
+
+\begin{itemize}
+  \item \emph{Power consumption} : original specifications called for an audio
+    amplification stage, which would have used tens of micro amperes. As
+    a reference, the MAX4468 micro power amplifier which was considered for this
+    application and used in the first version of the PCB requires between
+    \SIrange{24}{50}{\micro\ampere}. Compared to this, a difference between
+    400nA and 20nA was not significant. However, if the system is designed to be
+    completely turned off most of the time, then a combination of an ultra low
+    power microcontroller with a CC2420 or atmel chip would be more efficient.
+    However, even the most power-efficient devices on the market currently offer
+    % TODO : actually 700 to 1200 nA in RTC sleep
+    performance similar to the STM32W. Texas Instruments' MSP430F2001 for
+    example requires \SI{500}{nA} in idle mode\footnote{ \url{
+    http://www.ti.com/product/msp430f2001 }}, which is in the same order of
+    magnitude as the \SI{800}{nA} quoted for the STM32W108. In this case, the
+    duty cycle between idle and transmitting is more important than the power
+    savings from one chip to another.
+  \item \emph{Antenna diversity} : performance in the \SI{2.4}{GHz} band is pretty
+    random (show some examples!). Very sensitive to positioning and orientation.
+    Some chips now offer antenna diversity (link to very recent Atmel chip),
+    which could be a very interesting option if space permits. Especially if
+    using PCB antenna, would not increase costs too much.
+\end{itemize}
+
+
+
 \section{Design Issues}
 
 Talk about the design itself. Problem with this project is that it's only

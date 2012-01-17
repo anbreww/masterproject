@@ -455,12 +455,12 @@ Microchip microcontrollers.
 \subsection{ANT}\label{sub:ant}
 
 ANT is a proprietary solution that operates at \SI{2.4}{GHz}, designed for
-wireless sensors and low-power operation. It was not considered at this stage of
-the project, but is becoming popular in sports and monitoring devices.
-Unfortunately, it is completely proprietary (much like Z-Wave), and at present
-only two manufacturers offer ANT devices\footnote{ \url{
+wireless sensors and low-power operation which is becoming popular in sports and
+monitoring devices.  Unfortunately, it is completely proprietary (much like
+Z-Wave), and at present only two manufacturers offer ANT devices\footnote{ \url{
 http://www.thisisant.com/pages/products/chip-based-solutions } } : Nordic
-Semiconductor and Texas Instruments.
+Semiconductor and Texas Instruments. Due to its proprietary nature
+and low adoption from chip manufacturers, it was not considered in this project.
 
 \subsection{Network Stacks : summary}
 
@@ -473,18 +473,19 @@ licensing complications.
 \begin{table}[h]
     \myfloatalign
     \makebox[\textwidth][c]{
-  \begin{tabularx}{1.3\textwidth}{Xlllll} \toprule
+  \begin{tabularx}{1.4\textwidth}{Xllllll} \toprule
     \tableheadline{Criteria}
     & \tableheadline{ZigBee}
-    & \tableheadline{Bluetooth LE}
+    & \tableheadline{BT LE}
     & \tableheadline{6LoWPAN}
     & \tableheadline{MiWi}
-    & \tableheadline{Z-Wave}  \\ \midrule
-       Mesh           & Y           & Y        & Y        & N           & Y           \\ 
-       Star           & Y           & Y        & Y        & Y           & -           \\ 
-       License        & Proprietary & -        & Open     & Proprietary & Proprietary \\ 
-       Cross-Platform & Y           & -        & Y        & N           & Somewhat    \\ 
-       Radio          & 802.15.4    & 802.15.1 & 802.15.4 & 802.15.4    & Proprietary \\
+    & \tableheadline{Z-Wave}  
+    & \tableheadline{ANT} \\ \midrule
+  Mesh           & Y           & Y        & Y        & N           & Y           & Y \\
+  Star           & Y           & Y        & Y        & Y           & -           & Y \\ 
+  License        & Proprietary & -        & Open     & Proprietary & Proprietary & Proprietary \\ 
+  Cross-Platform & Y           & -        & Y        & N           & Somewhat    & N \\ 
+  Radio          & 802.15.4    & 802.15.1 & 802.15.4 & 802.15.4    & Proprietary & Prop. 900MHz\\
     \bottomrule
   \end{tabularx}
   }
@@ -554,42 +555,50 @@ it is possible to replace the microcontroller without modifying the RF part of
 the design.
 
 \paragraph{Complexity} 
-<++>
 
+From a developer's point of view, some solutions are easier to develop for than
+others. On a system-on-chip for instance, all software layers are present on the
+same device. This can make it difficult to separate the code for low-level
+networking features from the application level code.
 
-Mention some advantages like the over-the-air bootloader for STM32 and the
-Jennet-IP solution (and why we couldn't use it!) \footnote{Jennet IP was to be
-released under an open source license in the fourth quarter of 2011
-: \url{http://www.eetimes.com/electronics-news/4216038/Home-or-commercial-lighting-comes-under-Internet-control}
-but it's still not available today}
+Some chips, such as the CC2520, handle the 802.15.4 MAC layer so that the
+application chip can focus on higher level code. Other solutions, such as the
+XBee integrated devices from Digi\footnote{ \url{ http://www.digi.com/xbee/ }}
+handle the complete ZigBee stack, and only require the application to create
+frames with data and a target address.
 
-
-% TODO : incorporate this somewhere
-
-From a portability and cost point, it may be preferable to have the networking
-stack and hardware in one dedicated and cheap module, and adapt the target
-hardware to the desired application. There is no need to use a device with
-a Cortex M3 core to read a temperature sensor or turn off a light. However, some
-application may call for more processing power, such as an M4 or an FPGA, in
-which case the processing power of the STM32W will be wasted, and it will simply
-be added to the cost for nothing.
+To address this issue in a system-on-chip solution, one possibility is to
+program the devices with a network stack and bootloader, and transmit only
+application-level code to the devices. This allows the final software developer
+to develop network applications without having to compile any code related to
+the low-level networking functions. In this regard, the Jennet-IP protocol stack
+seemed promising. Unfortunately, it was to be released in the fourth quarter of
+2011\footnote{ \url{
+http://www.eetimes.com/electronics-news/4216038/Home-or-commercial-lighting-comes-under-Internet-control}
+} under an open source license, but it is still not available to this day.
 
 \subsection{Final choice}
 
 In the end, the solution selected for this application was the STM32W108
 System-on-Chip, for the following reasons.
 
-\paragraph{Architecture} : the STM32W108 is based on a 32-bit ARM core, which
+\paragraph{Architecture}
+
+the STM32W108 is based on a 32-bit ARM core, which
 operates at a frequency up to 24 MHz. It is the only solution in this comparison
 to offer a single-cycle Multiply and Accumulate instruction (see
 \autoref{tab:soc-comparison}).
 
-\paragraph{Peripherals} : the STM32W series includes an analog comparator which
-can trigger device wake-up (which was required as part of the project
-specifications), as well as a \ac{DMA}, which helps speed up calculations and
-lessen the load on the processing core.
+\paragraph{Peripherals} 
 
-\paragraph{RF Performance} : RF performance and associated power consumption are
+the STM32W series includes an analog comparator which
+can trigger device wake-up (which was required as part of the project
+specifications), as well as a \ac{DMA} channel, which helps speed up
+calculations and lessen the load on the processing core.
+
+\paragraph{RF Performance} 
+
+RF performance and associated power consumption are
 on par with Atmel's ATMEGA128RFA1 and Texas Instruments' CC2530. Specs given in
 the comparison table do not take into account ``boost mode'', which is said to
 add approximately \SI{1}{dBm} to the receiver's sensitivity and \SI{0.5}{dBm} to
@@ -606,37 +615,21 @@ not required by the target application, this would be an interesting choice.
 The CC2530 does include a DMA channel, but no MAC instruction. It is however
 more expensive than the STM32W108. 
 
-\section{Observations}
-
-What we've deduced from the project : was it the right choice? What could we
-have done better?
-
-\begin{itemize}
-  \item \emph{Power consumption} : original specifications called for an audio
-    amplification stage, which would have used tens of micro amperes. As
-    a reference, the MAX4468 micro power amplifier which was considered for this
-    application and used in the first version of the PCB requires between
-    \SIrange{24}{50}{\micro\ampere}. Compared to this, a difference between
-    400nA and 20nA was not significant. However, if the system is designed to be
-    completely turned off most of the time, then a combination of an ultra low
-    power microcontroller with a CC2420 or atmel chip would be more efficient.
-    However, even the most power-efficient devices on the market currently offer
-    % TODO : actually 700 to 1200 nA in RTC sleep
-    performance similar to the STM32W. Texas Instruments' MSP430F2001 for
-    example requires \SI{500}{nA} in idle mode\footnote{ \url{
-    http://www.ti.com/product/msp430f2001 }}, which is in the same order of
-    magnitude as the \SI{800}{nA} quoted for the STM32W108. In this case, the
-    duty cycle between idle and transmitting is more important than the power
-    savings from one chip to another.
-  \item \emph{Antenna diversity} : performance in the \SI{2.4}{GHz} band is pretty
-    random (show some examples!). Very sensitive to positioning and orientation.
-    Some chips now offer antenna diversity (link to very recent Atmel chip),
-    which could be a very interesting option if space permits. Especially if
-    using PCB antenna, would not increase costs too much.
-\end{itemize}
-
-
 \section{Microcontroller}
 
+% TODO
 A few words on the STM32, what is specific about it, talk about the M3 core, the
 instruction set, cpu clock
+
+The STM32W108 is a compromise : we put aside some more economical or more
+power-efficient architectures in favour of the additional processing power that
+was imposed by the project specifications.
+
+More complex applications may call for more processing power than this chip can
+provide. If this is the case, then a more powerful microcontroller would have to
+be added to the design, and the STM32W108 would be reduced to serving simply as
+a network interface, while the core application would run on the main processor.
+In this case, the additional cost justified by the Cortex M3 core would be
+wasted, as a less powerful microcontroller would be sufficient to handle the
+networking tasks. This is a point to consider in any future revisions of this
+project.
