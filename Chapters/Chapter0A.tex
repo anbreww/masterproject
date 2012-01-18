@@ -11,6 +11,7 @@
    \begin{sidewaystable}[h]
      \centering
      \begin{tabularx}{1\textwidth}{l l l p{1.5cm} p{1.5cm} l p{2.5cm} l l}
+       \toprule
         \textsc{Manufacturer}
         & \textsc{Part \#}
         & \textsc{Freq}
@@ -30,6 +31,7 @@
         TI             & CC2520    & 2.4Ghz     & 4.62            & -98            & 33.6mA @ 5 dBm    & 0.03              & -                 & -    \\ 
         Nordic Semi    & nRF24L01+ & 2.4Ghz     & -               & -94            & 11.3 @ 0 dBm      & 0.9               & Proprietary       & Y/N  \\ 
         Analog Devices & ADF7241   & 2.4Ghz     & 4.18            & -95            & 21.5mA @ 3 dBm    & -                 & 802.15.4          & Y    \\ 
+        \bottomrule
      \end{tabularx}
      \caption{Comparison : Transceiver chips}
      \label{tab:transceiver-comparison}
@@ -43,6 +45,7 @@
    \begin{sidewaystable}[h]
      \centering
      \begin{tabularx}{0.9\textwidth}{l l l p{1.5cm} l l  p{1.3cm} p{1.3cm} l l}
+       \toprule
       \textsc{Manufacturer}
       & \textsc{Part \#}
       & \textsc{Arch}
@@ -69,6 +72,7 @@
         Ember        & EM357         & 32 bit ARM (M3) & 5.33    & 192K     & 12K  & Y &  24      & Y     & -   \\ 
         Nordic Semi  & nRF24LE1      & 8051            & N/A     & 16K      & 1K   & - &  16      & -     & -   \\
 
+        \bottomrule
      \end{tabularx}
      \caption{Comparison : System-on-Chips, part 1}
      \label{tab:soc-comparison}
@@ -77,6 +81,7 @@
    \begin{sidewaystable}[h]
      \centering
      \begin{tabularx}{0.95\textwidth}{l l l p{1.5cm} p{3.5cm} p{2.1cm} p{1.8cm} l l}
+       \toprule
        \textsc{Manufacturer}
        & \textsc{Part \#}
        & \textsc{Freq}
@@ -103,7 +108,8 @@
         Ember        & EM357         & 2.4Ghz & -102    & 30mA @ 3 dBm     & 0.4    & 0.8   & 802.15.4 & Y      \\ 
         Nordic Semi  & nRF24LE1      & 2.4Ghz & -94     & 14mA @ 4dBm      & 0.5    & -     & proprietary & -   \\
 
-     \end{tabularx}
+        \bottomrule
+      \end{tabularx}
      \caption{Comparison : System-on-Chips, part 2}
      \label{tab:soc-comparison-2}
    \end{sidewaystable}

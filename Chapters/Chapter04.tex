@@ -31,34 +31,149 @@ should test first.
     frequencies.
 \end{itemize}
 
-% TODO : find a place to talk about this.
-RF Components : Some components have a very high influence on the
-    total cost of the device. We shall test alternatives to the recommended
-    components to determine if we can lower the cost without compromising
-    performance.
 \section{Tests}
 
-Here we'll describe the tests and show the results
+We will begin by measuring the system's overall power consumption. Since the
+basic version 2 of the device contains only a microcontroller, indicator LED and
+voltage regulator, we do not expect the results to be very different from the
+specifications advertised on the datasheet. These tests will therefore be quite
+brief, and serve only to determine whether there are large variations from the
+manufacturer's specifications.
 
-\subsection{Current consumption}
+\subsection{Current consumption}\label{sub:current-consumption}
 
-Show the measured current consumption in various modes, show the associated code
-to achieve that state, and compare with values from the datasheet.
+Our goal is to determine the average power consumption of the system depending
+on the time spent transmitting data, as the radio is the biggest consumer of
+power in the device.
 
-\begin{lstlisting}[language=C,caption=Example code for sleep mode A]
-  int main(void)
-  {
-    STlibSleep(SLEEP_MODE_BLAH);
-    sleep();
+The first step therefore is to measure the consumption of the device during
+transmission. The rest of the time, the device will either be running in
+a lower-power mode with the radio disabled (reading data from sensors for
+example) or in sleep mode, waiting to be triggered by an external event.
+\autoref{tab:power-radio} shows the consumption measured in three different
+modes:
+
+\begin{itemize}
+  \item Radio turned off. Using \texttt{ST\_RadioSleep()} to turn off the RF part
+    of the device.
+  \item Radio turned on. The radio element was initialized using the command
+    \texttt{ST\_RadioSetPower(3)}, which configures it to operate at its maximum
+    standard power setting, \SI{3}{dBm}. The channel was set to 14.
+  \item Boost mode. In addition to the standard high power setting, the same
+    measurements were made with ``boost mode'' activated. The device datasheet
+    claims that this mode can increase receiver sensitivity by up to
+    \SI{1}{dBm} and transmit power by up to \SI{0.5}{dBm}.
+\end{itemize}
+
+These measurements were done once in idle mode, and once while transmitting
+a carrier tone on channel 14 (\SI{2420}{MHz}). This was done by using the
+function \texttt{ST\_StartTransmitTone()}.
+
+
+\begin{table}
+  \myfloatalign
+  \begin{tabularx}{\textwidth}{X X X}
+    \toprule
+    \tableheadline{Mode}
+    & \tableheadline{Boost on}
+    & \tableheadline{Boost off}
+    \\ \midrule
+    Radio Off           & \SI{10.2}{mA}  & -     \\
+    Radio On (standby)  & \SI{29.3}{mA} & \SI{32.5}{mA}   \\
+    % TODO : measure transmit tone no boost
+    Transmit tone       & \SI{31.4}{mA} & \SI{35.3}{mA}   \\
+    \bottomrule
+    \end{tabularx}
+    \caption[Radio power consumption]{Radio power consumption}
+    \label{tab:power-radio}
+\end{table}
+
+These measurements are consistent with the results expected from the
+datasheet.\footnote{ More details and consumption for different power modes can
+be found in table 150 of the device datasheet, p.215 : \url{
+http://www.st.com/internet/com/TECHNICAL_RESOURCES/TECHNICAL_LITERATURE/DATASHEET/CD00248316.pdf
+}.} From these results, we can see that it is worth disabling the RF module
+of the chip any time it is not required, as it requires twice the amount of
+power of the chip core and peripherals. 
+
+\subsubsection{Sleep Mode}\label{sub2:sleep-mode}
+
+Next, we need to know how much power the device consumes in sleep mode, since
+this is where the device will be operating over 99\% of the time. 
+
+The SimpleMAC library provided by the manufacturer gives easy access to the
+different sleep modes of the STM32W. The following code snippet will turn off
+the radio then put the device in \texttt{NOTIMER} sleep mode : this will turn
+off all peripherals, including the internal clock, until triggered by an
+external interrupt.
+
+\begin{lstlisting}[language=C,caption=Code snippet for deep sleep mode]
+  int main(void) {
+    while(1) {
+      // ... actions here
+      ST_RadioSleep();
+      halInternalSleep(SLEEPMODE_NOTIMER);
+
+      // ... wait until wake up
+    }
   }
 \end{lstlisting}
 
+In theory, in this mode, the device should be able to run using less than
+\SI{1}{\micro\ampere}. However, in order to achieve this, we must be able to
+enter Sleep Modes 1 or 2\footnote{Sleep modes are described in the datasheet,
+under section 6.5 \emph{Power Management}, p. 51}.
+
+Unfortunately, in the SWD programming mode does not allow the device to go below
+``emulated sleep'', a sleep mode which keeps some parts of the device active to
+maintain debug functionalities, such as breakpoints. In our testing, we were not
+able to achieve power consumptions below \SI{470}{\micro\ampere}, while the
+datasheet suggests a minimal consumption of \SI{800}{nA} in deep sleep with
+a wake-up timer active.
+
+After many unsuccessful attemps with various programming tools, we were forced
+to give up as time was running out. For the following calculations, we will
+assume that it is possible to achieve the manufacturer's advertised consumption,
+and round it up to \SI{1}{\micro\ampere}.
+
 \subsubsection{Duty Cycle}
 
-Taking into account the time it takes to wake the RF part (take from datasheet
-since our scopes suck), derive a formula for the average consumption.
+Using the consumption data mentioned above, we can determine which proportion of
+the time must be spent in sleep mode versus transmission mode to achieve a given
+average consumption. To obtain an average current $C$, we would use the
+following simplified formula:
+\begin{equation*}
+  C = (1 - D) S + D T
+\end{equation*}
 
-\subsubsection{Energy Harvesting}
+where:
+
+\begin{tabular}[h!]{ll}
+$D$   & duty cycle (proportion of time spent transmitting)  \\
+$S$   & sleep mode consumption  \\
+$T$   & transmission mode consumption \\
+\end{tabular}
+
+Which we can rewrite to find the duty cycle:
+
+\begin{equation*}
+  D = \frac{C-S}{T-S}
+\end{equation*}
+
+As an example, the data gathered during the one-month energy harvesting (see
+\autoref{sub2:energy-harvesting}) experiment suggests that we can gather an
+average of \SI{20}{\micro\ampere} during one month in December. 
+
+With a sleep mode consumption $S = \SI{1}{\micro{}A}$, transmission current $T = 
+\SI{30}{mA}$ and desired consumption $C = \SI{20}{\micro\ampere}$, we need a duty
+cycle of 0.064\%, which translates to \SI{38}{ms} of transmission time per
+minute.
+
+
+
+\subsubsection{Energy Harvesting}\label{sub2:energy-harvesting}
+
+%TODO : this section
 
 Show a few plots of the harvesting results, give some average values for various
 situations, and give some duty cycle estimates.
@@ -73,6 +188,12 @@ to a slow mode, without RF, log to EEPROM and then send 10 readings at a time.
 
 \subsection{RF Power}
 
+In the following series of experiments, we will compare the emission power of
+our boards with those of the manufacturer's reference kit\footnote{The devices
+used are part of the STM32W-RFCKIT
+: \url{ http://www.st.com/internet/evalboard/product/251361.jsp }.}
+
+\subsubsection{Technical Details}
 
 \begin{figure}[htb]
   \begin{center}
@@ -82,16 +203,15 @@ to a slow mode, without RF, log to EEPROM and then send 10 readings at a time.
   \label{fig:channel-allocation}
 \end{figure}
 
-At \SI{2.4}{GHz}, the spectrum for the IEEE 802.15.4 is divided into 16 equal
-channels, each \SI{2}{MHz} wide, spaced \SI{5}{MHz} apart. The spectrum is
-centered around \SI{2.45}{GHz}.\citep[pg. 29]{ieee802154}
-\marginpar{put this in chapter 2?}
+At \SI{2.4}{GHz}, the spectrum used by the IEEE~802.15.4 standard is divided
+into 16 equal channels, each \SI{2}{MHz} wide, spaced \SI{5}{MHz} apart. The
+spectrum is centered around \SI{2.45}{GHz}.\citep[pg. 29]{ieee802154}
 
 Channel frequency is defined as $Fc = 2405 + 5 (k-11)$ in Megaherz, for $k
-= 11..26$.
+= 11..26$. We will be testing all devices available along the whole spectrum,
+testing each channel individually.
 
-Illustrate the test setup, clearly indicate measuring distance. Test for various
-orientations.
+\subsubsection{Test setup}
 
 \begin{figure}[htb]
   \begin{center}
@@ -123,17 +243,68 @@ the device can be found here : \url{http://micro.arocholl.com/}.}
       ST_RadioSetChannel(i);
       ST_RadioStartTransmitTone();
 
-      halCommonDelayMilliseconds(10000);
+      halCommonDelayMilliseconds(10000); // wait 10 seconds
 
       ST_RadioStopTransmitTone();
     }
   }
 \end{lstlisting}
 
+The results of the first series of tests can be found in
+\autoref{tab:power-30cm}. This table lists the power measured on each channel
+for various versions of the transmitter. To clarify the column headers, here is
+a brief overview of the devices that were analysed:
+
+\begin{itemize}
+  \item \emph{v1} Version 1.0 of the PCB, as described in \autoref{sec:v1}.
+  \item \emph{v2} Version 2.0 of the PCB, as described in \autoref{sec:v2}.
+  \item \emph{usbstick} The USB stick contained in the ST evaluation kit. This
+    module uses a chip antenna. See \autoref{fig:eval-kit}.
+  \item \emph{rf-mote} This device uses the same reference design as this
+    project. It is a battery-operated portable device, and is also part of the
+    STM32W-RFCKIT evaluation set.
+\end{itemize}
+
+As explained earlier, these measurements were not made with proper test
+equipment, nore were they made in a controlled environment. To make relevant
+measurements, we would need access to expensive test equiment in an RF anechoic
+chamber\footnote{ See \url{ http://en.wikipedia.org/wiki/Anechoic_chamber }.}.
+
+\begin{figure}[bth]
+  \makebox[\textwidth][c]{
+  \myfloatalign
+  \subfloat[USB Stick]
+  {\includegraphics[height=.30\linewidth]{gfx/photos/usb-stick}}
+  \subfloat[RF-Mote]
+  {\includegraphics[height=.30\linewidth]{gfx/photos/rfcmote}}
+  }
+  \caption{Evaluation kit components}
+  \label{fig:eval-kit}
+\end{figure}
+
+Unfortunately, the labs who posess the equipment needed were not able to put it
+at our disposal. Therefore, we relied on less accurate methods. As can be seen
+in the results in \autoref{tab:power-30cm}, the results vary greatly from one
+channel to another. This is most likely due to the calibration of the test
+device, as it shows across all devices, although some use different antenna
+designs. We did note however by performing multiple tests with the same device,
+on the same channel, that the repeatability was lower than \SI{1}{dBm}. We can
+therefore use these results to compare the performance of different devices on
+the same channel, but not one device across several channels.
+
+\subsubsection{Results}\label{power-results}
+
 \begin{table}
   \myfloatalign
-  \begin{tabularx}{\textwidth}{r|c|X|X|X|X}
-        Channel  & Freq [MHz] & v1    & v2    & usbstick & rf-mote \\ \hline
+  \begin{tabularx}{\textwidth}{c c X X X X}
+    \toprule
+    \tableheadline{Channel}
+        & \tableheadline{Freq [MHz]}
+        & \tableheadline{v1}
+        & \tableheadline{v2}
+        & \tableheadline{usbstick}
+        & \tableheadline{rf-mote}
+        \\ \midrule
         11       & 2405       & -80   & -83.5 & -85      & -81.5   \\ 
         12       & 2410       & -55.5 & -62.5 & -63.5    & -60     \\ 
         13       & 2415       & -55.5 & -63.5 & -67      & -65.5   \\ 
@@ -150,6 +321,7 @@ the device can be found here : \url{http://micro.arocholl.com/}.}
         24       & 2470       & -62   & -62.5 & -62.5    & -49     \\ 
         25       & 2475       & -60   & -60   & -65.5    & -53     \\ 
         26       & 2480       & -82   & -84.5 & -80.5    & -70     \\
+        \bottomrule
     \end{tabularx}
     \caption[Power Measurements at \SI{30}{cm}]{Power Measurements, in dBm,
     \SI{30}{cm} from emitter}
@@ -157,10 +329,40 @@ the device can be found here : \url{http://micro.arocholl.com/}.}
 \end{table}
 
 
+\bigskip
+As we can see, version 2.0 of the design performs less well than the first
+version, while version 1.0 performs poorer than the rf-mote.
+
+TODO : add some more commentary.
+
+In addition to this, we tested version 2.0 with an external ``ducky antenna''
+(\autoref{fig:v2-ducky}). The setup was the same as for the previous devices.
+The emitter was placed \SI{30}{cm} away from the portable measuring device, with
+the antenna upright. As we can see from the results in
+\autoref{tab:power-ducky}, the difference is very significant. Adding the
+antenna improves the emission power by \SI{20}{dBm} on average.
+\marginpar{TODO : calculate exact value}
+For reference, we repeated the measurements at a distance of \SI{2}{m} from the
+receiver. These results can be found in the same table.
+
+\begin{figure}[bth]
+  \begin{center}
+    \includegraphics[width=.65\linewidth]{gfx/photos/v2-ducky}
+  \end{center}
+  \caption{v2 device with ``rubber ducky'' antenna}
+  \label{fig:v2-ducky}
+\end{figure}
+
+
 \begin{table}
   \myfloatalign
-  \begin{tabularx}{0.7\textwidth}{r|c|X|X}
-        Channel  & Freq [MHz] &  \SI{30}{cm} & \SI{2}{m} \\ \hline
+  \begin{tabularx}{0.7\textwidth}{r c X X}
+    \toprule
+    \tableheadline{Channel}
+    & \tableheadline{Freq [MHz]}
+    & \tableheadline{\SI{30}{cm}}
+    & \tableheadline{\SI{2}{m}}
+        \\ \midrule
         11       & 2405       & -60.5      & -86      \\ 
         12       & 2410       & -35.5      & -66      \\ 
         13       & 2415       & -36        & -65.5    \\ 
@@ -177,11 +379,13 @@ the device can be found here : \url{http://micro.arocholl.com/}.}
         24       & 2470       & -38        & -60      \\ 
         25       & 2475       & -36.5      & -58      \\ 
         26       & 2480       & -61.5      & -78      \\
+        \bottomrule
     \end{tabularx}
     \caption[Power Measurements of external antenna]{Power Measurements, in dBm,
     ``ducky'' antenna}
     \label{tab:power-ducky}
 \end{table}
+
 \subsection{RF Range}
 
 Take possibly the best performing device from the previous tests (hopefully the
@@ -189,25 +393,24 @@ one with the ducky antenna), and then see how far I can get with the test
 modules in various situations. Perhaps test in a corridor with a double
 decameter.
 
-\subsection{RF Components}
-
-List recommended components and their BOM price. Compare those with some lower
-priced examples (and compare their datasheet specs, like insertion loss). Then
-replace those in a design and then run a power test on them, in similar
-operating conditions.
-
-
 
 
 \section{Comparison Tests}
 
 In parallel to this project, it was discovered that a similar student project
-was taking place. We decided to set up a simple experiment to compare, somewhat
-informally, the performance of both our designs.
+was taking place in a different lab. The eLab\footnote{ \url{
+http://elab.epfl.ch/ }} had an ongoing project to develop ANT modules for a home
+automation network.\footnote{Student project by Jean-Baptiste Haury, under the
+supervision of Fabrizio Lo Conte and Laurent Fabre.}
+Since both projects were meant to operate at the same frequencies but use
+different antenna designs, we decided to set up a simple experiment to compare,
+somewhat informally, the performance of both our designs. 
+
 
 In this test, illustrated in \autoref{fig:test-setup}, we measure the
 transmission of the antenna, using an SMA connector soldered through the board,
-as described in % TODO : add ref to dropout's guide.
+as described in \citep{DropoutGuide}.
+
 
 \begin{figure}[htb]
   \begin{center}
@@ -241,7 +444,7 @@ The following screenshots show the results of our four tests.
 
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{gfx/tests/test01-result}
+    \includegraphics[width=0.9\textwidth]{gfx/tests/test01-result}
   \end{center}
   \caption{Test 1 : device A, normal}
   \label{fig:test01-result}
@@ -249,7 +452,7 @@ The following screenshots show the results of our four tests.
 
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{gfx/tests/test02-result}
+    \includegraphics[width=0.9\textwidth]{gfx/tests/test02-result}
   \end{center}
   \caption{Test 2 : device A, parallel}
   \label{fig:test02-result}
@@ -257,7 +460,7 @@ The following screenshots show the results of our four tests.
 
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{gfx/tests/test03-result}
+    \includegraphics[width=0.9\textwidth]{gfx/tests/test03-result}
   \end{center}
   \caption{Test 3 : device B, normal}
   \label{fig:test03-result}
@@ -265,7 +468,7 @@ The following screenshots show the results of our four tests.
 
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{gfx/tests/test04-result}
+    \includegraphics[width=0.9\textwidth]{gfx/tests/test04-result}
   \end{center}
   \caption{Test 4 : device B, parallel}
   \label{fig:test04-result}
@@ -318,10 +521,6 @@ outperforms our own.
 
 Unfortunately, we do not know for a fact whether such a protection is necessary
 or not, as it would require equipment and qualifications beyond our reach. 
-% TODO : add that the potential gain seems to justify that sort of testing.
-% probably note that if a project like this were to be taken any further, we'd
-% need some specialists to work on the RF part. A semester project testing
-% antenna designs at the lema would be nice
 
 \begin{figure}[htb]
   \begin{center}
@@ -338,3 +537,4 @@ antenna design guide\citep{AN3359}, we can see that the first orientation tested
 places the receiving antenna in the worst possible location in the radiation
 pattern. For convenience, this pattern is reproduced in
 \autoref{fig:radiation-pattern}
+
