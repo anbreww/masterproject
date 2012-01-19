@@ -270,7 +270,9 @@ devices\footnote{tests were done using Digi XBee Series 2 transceivers, using
 1/4 wave whip antennas. Although not documented in this report, it was possible
 to establish a reliable communication between three floors.}
 has shown that in a typical domestic environment, with many wireless devices
-active, it is possible to achieve a reliable link between devices in different
+active, it is possible to achieve a reliable link (less than 5\% packet loss)
+between devices in different
+% TODO : fix redundancy between paragraph and footer
 rooms and on different floors. Furthermore, we will be favouring a networking
 stack that can provide mesh capabilities, as explained in
 \autoref{sec:topology}. This will lower the importance of the range, as
@@ -322,14 +324,16 @@ $\nu$ & carrier frequency \\
   \label{tab:frequency-comparison}
 \end{table}
 
+% TODO : explain why ``y/n''
+
 
 \bigskip
-Based on these facts, we chose to favour a \SI{2.4}{GHz} solution for our
-design. This guarantees that the same product can be used in any region in the
-world, as well as requiring the smallest antenna. At design time, there were
-also more 802.15.4-compatible chips available on the market for \SI{2.4}{GHz}
-than for any other operating frequency, as can be seen from the comparisons in
-\autoref{sec:chips}.
+Based on the facts described in the previous sections, we chose to favour
+a \SI{2.4}{GHz} solution for our design. This guarantees that the same product
+can be used in any region in the world, as well as requiring the smallest
+antenna. At design time, there were also more 802.15.4-compatible chips
+available on the market for \SI{2.4}{GHz} than for any other operating
+frequency, as can be seen from the comparisons in \autoref{sec:chips}.
 
 \section{Network stacks}\label{sec:stacks}
 
@@ -485,7 +489,7 @@ licensing complications.
   Star           & Y           & Y        & Y        & Y           & -           & Y \\ 
   License        & Proprietary & -        & Open     & Proprietary & Proprietary & Proprietary \\ 
   Cross-Platform & Y           & -        & Y        & N           & Somewhat    & N \\ 
-  Radio          & 802.15.4    & 802.15.1 & 802.15.4 & 802.15.4    & Proprietary & Prop. 900MHz\\
+  Radio          & 802.15.4    & 802.15.1 & 802.15.4 & 802.15.4    & Prop. 900MHz& Proprietary \\
     \bottomrule
   \end{tabularx}
   }

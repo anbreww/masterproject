@@ -51,12 +51,20 @@ transmission. The rest of the time, the device will either be running in
 a lower-power mode with the radio disabled (reading data from sensors for
 example) or in sleep mode, waiting to be triggered by an external event.
 \autoref{tab:power-radio} shows the consumption measured in three different
-modes:
+modes.
+
+\paragraph{Note} 
+all functions described here are part of the ST SimpleMAC library provided
+by the manufacturer. The library is proprietary, and the radio is not documented
+in the device datasheets. Therefore, the functions provided in this library are
+the only way of interacting with the radio portion of the device.
 
 \begin{itemize}
-  \item Radio turned off. Using \texttt{ST\_RadioSleep()} to turn off the RF part
+  \item Radio turned off. Using \texttt{ST\_RadioSleep()}
+
+    to turn off the RF part
     of the device.
-  \item Radio turned on. The radio element was initialized using the command
+  \item Radio turned on. The radio element was initialized using the function
     \texttt{ST\_RadioSetPower(3)}, which configures it to operate at its maximum
     standard power setting, \SI{3}{dBm}. The channel was set to 14.
   \item Boost mode. In addition to the standard high power setting, the same
@@ -69,7 +77,6 @@ These measurements were done once in idle mode, and once while transmitting
 a carrier tone on channel 14 (\SI{2420}{MHz}). This was done by using the
 function \texttt{ST\_StartTransmitTone()}.
 
-
 \begin{table}
   \myfloatalign
   \begin{tabularx}{\textwidth}{X X X}
@@ -80,7 +87,6 @@ function \texttt{ST\_StartTransmitTone()}.
     \\ \midrule
     Radio Off           & \SI{10.2}{mA}  & -     \\
     Radio On (standby)  & \SI{29.3}{mA} & \SI{32.5}{mA}   \\
-    % TODO : measure transmit tone no boost
     Transmit tone       & \SI{31.4}{mA} & \SI{35.3}{mA}   \\
     \bottomrule
     \end{tabularx}
@@ -162,16 +168,50 @@ Which we can rewrite to find the duty cycle:
 
 As an example, the data gathered during the one-month energy harvesting (see
 \autoref{sub2:energy-harvesting}) experiment suggests that we can gather an
-average of \SI{20}{\micro\ampere} during one month in December. 
+average of \SI{10}{\micro\ampere} during one month in December. 
 
 With a sleep mode consumption $S = \SI{1}{\micro{}A}$, transmission current $T = 
-\SI{30}{mA}$ and desired consumption $C = \SI{20}{\micro\ampere}$, we need a duty
-cycle of 0.064\%, which translates to \SI{38}{ms} of transmission time per
+\SI{30}{mA}$ and desired consumption $C = \SI{10}{\micro\ampere}$, we need a duty
+cycle of 0.03\%, which translates to \SI{18}{ms} of transmission time per
 minute.
 
+The amount of data that can be transferred during an interval is not very
+straightforward to calculate, as it depends on many parameters and is not
+deterministic. The result will depend on the size of each packet, protocol
+overhead, but more importantly, the length of the path and number of retries
+needed to reach the destination node. However, using some guidelines given by
+Digi, who manufacture a range of ZigBee devices\footnote{ \emph{How long does it
+take to send data through an 802.15.4 network?} : \url{
+http://www.digi.com/support/kbase/kbaseresultdetl?id=3065 }}, we can estimate
+that we should be able to send up to two packets of 50 to 100 bytes every
+minute. This should be sufficient to send periodic sensor readings or commands
+to control remote devices.
 
 
 \subsubsection{Energy Harvesting}\label{sub2:energy-harvesting}
+
+
+\begin{table}[h]
+  \myfloatalign
+  \begin{tabularx}{\textwidth}{X X}
+    \toprule
+    \tableheadline{Location}
+    %& \textsc{average power [\si{\micro\watt}]}
+    & \tableheadline{Average Power [\si{\micro\watt}]}
+    \\ \midrule
+    Hangar, right         & 28.09   \\
+    Hangar, left          & 50.83   \\
+    Jeremy, right wall    & 151.17  \\
+    Jeremy, left wall     & 22.60   \\
+    Solaiman, right wall  & 7.38    \\
+    Solaiman, left wall   & 23.85   \\
+    Lab wall (no sun)     & -2.15   \\
+    Lab floor             & 54.50   \\
+    \bottomrule
+    \end{tabularx}
+    \caption[Energy harvesting results]{Energy harvesting results}
+    \label{tab:harvest-results}
+\end{table}
 
 %TODO : this section
 
@@ -321,6 +361,8 @@ the same channel, but not one device across several channels.
         24       & 2470       & -62   & -62.5 & -62.5    & -49     \\ 
         25       & 2475       & -60   & -60   & -65.5    & -53     \\ 
         26       & 2480       & -82   & -84.5 & -80.5    & -70     \\
+        \midrule 
+        Average  & -          & -66.3 & -70.8 & -70.9    & -64.3  \\
         \bottomrule
     \end{tabularx}
     \caption[Power Measurements at \SI{30}{cm}]{Power Measurements, in dBm,
@@ -340,10 +382,12 @@ In addition to this, we tested version 2.0 with an external ``ducky antenna''
 The emitter was placed \SI{30}{cm} away from the portable measuring device, with
 the antenna upright. As we can see from the results in
 \autoref{tab:power-ducky}, the difference is very significant. Adding the
-antenna improves the emission power by \SI{20}{dBm} on average.
-\marginpar{TODO : calculate exact value}
+antenna improves the emission power by \SI{24.7}{dBm} on average compared to the
+same device with only the PCB antenna.
 For reference, we repeated the measurements at a distance of \SI{2}{m} from the
-receiver. These results can be found in the same table.
+receiver. These results can be found in the same table. We can notice that the
+external antenna has similar results at \SI{2}{m} as the standard device at
+\SI{30}{cm}.
 
 \begin{figure}[bth]
   \begin{center}
@@ -379,6 +423,8 @@ receiver. These results can be found in the same table.
         24       & 2470       & -38        & -60      \\ 
         25       & 2475       & -36.5      & -58      \\ 
         26       & 2480       & -61.5      & -78      \\
+        \midrule
+        Average  & -          & -46.1      & -70.0    \\
         \bottomrule
     \end{tabularx}
     \caption[Power Measurements of external antenna]{Power Measurements, in dBm,
