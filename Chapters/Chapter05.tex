@@ -2,49 +2,98 @@
 \chapter{Future improvements}\label{ch:improvements}
 %************************************************
 
-Here we'll discuss some compromises that were made. Notably:
+During this project, many compromises were made. In this chapter, we will
+discuss some of the problems we encoutered and choices that were made. We will
+conclude this report by suggesting possible ways to improve the current design,
+or what to change if the design is to be re-done from scratch.
 
-\begin{itemize}
-  \item Lack of knowledge in RF design, so we went with the reference design for
-    the chip.
-  \item Time constraints, needed to push through with the design, otherwise it
-    would have been better to test various different antenna designs. 
-  \item Choosing a different chip : if the requirements had been a little
-    different, we could have chosen a different solution, which would have been
-    cheaper, more powerful and/or more energy efficient.
-\end{itemize}
+\section{Antenna}
+
+The first item to note is that due to our lack of knowledge in the design of RF
+systems, we decided to use the reference design provided by the manufacturer. An
+effort was made to replicate this design exactly, down to the placement of
+passive elements and vias, as it had been suggested that this could impact the
+performance significantly. As the first version showed, we obtained very similar
+results to the reference.
+
+In the second version, we introduced some slight modifications to the layout of
+the RF components, and saw the performance decrease. Whether this is directly
+linked to the placement of the components, we do not know for sure.
+
+Knowing this, we believe it would be smarter to produce several versions of each
+PCB, every time with slight variations in the design of the antenna, and compare
+each version, refining the design by successive iterations. At the beginning,
+a lot of time was intentionally spent examining various platform choices in
+order to make an educated decision. As a result, the actual design was slightly
+rushed, and not enough time was spent on testing various antenna designs.
+Instead, we opted to produce one prototype rapidly, sticking to the reference as
+closely as possible, to ensure that everything functioned as expected.
+
+In hindsight, knowing now that there were no issues with the design, it may not
+have caused much harm to delay production of the first PCB by one or two weeks,
+to allow us to test several antenna shapes at the same time. If the design had
+been unsuccessful though, this extra time would most likely have been wasted.
 
 
-TODO : integrate this info into this chapter
+During our experiments, we noticed that performance in the \SI{2.4}{GHz} band is
+quite random, and can vary tremendously with only very little movement.
+Sometimes as little as a centimeter difference in placement can have
+a noticeable impact on a device's reception. Some devices provide a solution to
+this, called \emph{antenna diversity} : one device has two or more antennas,
+connected to the transceiver via an RF multiplexer. The transceiver switches
+between the antennas periodically, and automatically selects the antenna with
+the best reception.\footnote{The AT86RF231 is an example of a chip with
+a built-in antenna diversity feature : \url{
+http://www.atmel.com/dyn/resources/prod_documents/doc8158.pdf }.}
 
-What we've deduced from the project : was it the right choice? What could we
-have done better?
+\section{Microcontroller}
 
-\begin{itemize}
-  \item \emph{Power consumption} : original specifications called for an audio
-    amplification stage, which would have used tens of micro amperes. As
-    a reference, the MAX4468 micro power amplifier which was considered for this
-    application and used in the first version of the PCB requires between
-    \SIrange{24}{50}{\micro\ampere}. Compared to this, a difference between
-    400nA and 20nA was not significant. However, if the system is designed to be
-    completely turned off most of the time, then a combination of an ultra low
-    power microcontroller with a CC2420 or atmel chip would be more efficient.
-    However, even the most power-efficient devices on the market currently offer
-    % TODO : actually 700 to 1200 nA in RTC sleep
-    performance similar to the STM32W. Texas Instruments' MSP430F2001 for
-    example requires \SI{500}{nA} in idle mode\footnote{ \url{
-    http://www.ti.com/product/msp430f2001 }}, which is in the same order of
-    magnitude as the \SI{800}{nA} quoted for the STM32W108. In this case, the
-    duty cycle between idle and transmitting is more important than the power
-    savings from one chip to another.
-  \item \emph{Antenna diversity} : performance in the \SI{2.4}{GHz} band is pretty
-    random (show some examples!). Very sensitive to positioning and orientation.
-    Some chips now offer antenna diversity (link to very recent Atmel chip),
-    which could be a very interesting option if space permits. Especially if
-    using PCB antenna, would not increase costs too much.
-\end{itemize}
+Our choice of microcontroller was very much dictated by a small subset of
+specifications, most notably the need for certain analog functions and
+processing power. In a more general case of a sensor network design, the
+requirements may be slightly different, and allow a different choice.
+
+Had the requirements been looser, we may have opted for a different chip, as
+some platforms are cheaper than the one chosen for this project.
+
+Our choice to use a System-on-Chip rather than two separate chips to save space
+and simplify the board design is not necessarily the most economical, as the
+same functionality could have been achieved with a (cheaper) transceiver chip
+and separate processing core. For example, a combination of the STM32F100 Cortex
+M3 microcontroller with the AT86RF230 mentioned in
+\autoref{tab:transceiver-comparison}, would have cost approximately \$1 less
+than the STM32W108, so long as the memory was sufficient. Considering the
+processing power and memory available on the STM32W108, it provides a very good
+value compared to a two-chip solution.
+
+\section{Power consumption}
+
+The specifications of this project called for an audio amplification stage which
+would be permanently powered and wake the chip from sleep when the audio signal
+went over a certain threshold. This feature, which was integrated to the first
+version of the PCB, requires tens of micro amperes. As a reference, the MAX4458
+micro power amplifier used in this design requires
+\SIrange{24}{50}{\micro\ampere}.
+
+In the tables from \autoref{ch:appendix-comparison}, we will note that some
+transceivers only require \SI{20}{nA} when not activated, which is significantly
+less than the \SI{400}{nA} that our STM32W requires. However, compared to the
+consumption of the audio stage, this difference is negligible. Furthermore, the
+use of a separate transceiver would still require a second microcontroller to be
+incorporated into the design.
+
+Texas instruments advertise the MSP430F2001 as being the most power-efficient
+microcontroller on the market.\footnote{ \url{
+http://www.ti.com/product/msp430f2001 } } Nevertheless, this chip requires
+\SI{500}{nA} of power in idle mode, which is in the same order of magnitude as
+the \SI{800}{nA} quoted for the STM32W108. From the data and calculations put
+together in the previous chapter, we have noticed that the duty cycle between
+the system's idle time and transmission time has a larger impact on overall
+power consumption than the power savings between one chip or the other.
 
 \subsection{RF Components}
+
+
 
 TODO : explain how we should do this, with proper test equipment
 List recommended components and their BOM price. Compare those with some lower

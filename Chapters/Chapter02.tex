@@ -4,13 +4,10 @@
 
 \section{Communication}\label{sec:communication}
 
-The main specification that must be decided before we can start working on the
-design is the communication method.
-
-% TODO : blurb about what's needed : frequency, MAC, PHY, protocols, etc.
-
-In order to create a useful platform for home automation, the following features
-are desirable:
+The method of communication is the main specification which must be decided
+before we can choose a processing platform and start working on the design of
+the PCB. Since the design is targeted at home automation, we have decided that
+the following features would be desirable to create a useful platform :
 
 \begin{itemize}
   \item \emph{Universal} :
@@ -235,6 +232,15 @@ frequency range.\footnote{IEEE~802.15.4c\texttrademark{}-2009 : Amendment 2 :
 Alternative Physical Layer Extension to support one or more of the Chinese
 314-316~MHz, 430-434~MHz, and 779-787~MHz bands.}
 
+In \autoref{tab:frequency-comparison}, the ``Y/N'' notes in region independence
+and availability of networking stacks refer respectively to the facts that,
+\begin{itemize}
+  \item Region independence is not enforced by the ITU but rather enabled by
+    regional exceptions.
+  \item Mesh networking stacks are available, but recent and therefore not yet
+    widely used.
+\end{itemize}
+
 \subsubsection{868 / \SI{915}{MHz}}
 
 The second option that we will consider in the sub-GHz band is around
@@ -267,19 +273,18 @@ operate at this frequency.
 
 In spite of this caveat, the author's previous experience with ZigBee
 devices\footnote{tests were done using Digi XBee Series 2 transceivers, using
-1/4 wave whip antennas. Although not documented in this report, it was possible
-to establish a reliable communication between three floors.}
-has shown that in a typical domestic environment, with many wireless devices
-active, it is possible to achieve a reliable link (less than 5\% packet loss)
-between devices in different
-% TODO : fix redundancy between paragraph and footer
-rooms and on different floors. Furthermore, we will be favouring a networking
-stack that can provide mesh capabilities, as explained in
-\autoref{sec:topology}. This will lower the importance of the range, as
-extending the range of the network is a simple matter of adding a cheap repeater
-(router) device at some point in the data path. For example, if communication
-cannot be established between the first and third floors, a router can be placed
-on the second floor to bridge the gap between those two domains.
+1/4 wave whip antennas, but will not be documented in this report.}
+has shown that in a typical domestic environment, with many parasitic wireless
+devices active, it is possible to achieve a reliable link (less than 5\% packet
+loss) between devices in different rooms and on different floors : two devices
+were able to communicate between the basement and a room two floors above.
+Furthermore, we will be favouring a networking stack that can provide mesh
+capabilities, as explained in \autoref{sec:topology}. This will lower the
+importance of the range, as extending the range of the network is a simple
+matter of adding a cheap repeater (router) device at some point in the data
+path. For example, if communication cannot be established between the first and
+third floors, a router can be placed on the second floor to bridge the gap
+between those two domains.
 
 
 \section{Comparison}
@@ -323,8 +328,6 @@ $\nu$ & carrier frequency \\
   \caption[Frequency comparison]{Frequency comparison}
   \label{tab:frequency-comparison}
 \end{table}
-
-% TODO : explain why ``y/n''
 
 
 \bigskip
@@ -597,8 +600,9 @@ to offer a single-cycle Multiply and Accumulate instruction (see
 
 the STM32W series includes an analog comparator which
 can trigger device wake-up (which was required as part of the project
-specifications), as well as a \ac{DMA} channel, which helps speed up
-calculations and lessen the load on the processing core.
+specifications), as well as a 6-channel \ac{DMA}, which helps speed up
+calculations and lessen the load on the processing core by automating some read
+and write operations.
 
 \paragraph{RF Performance} 
 
@@ -614,21 +618,23 @@ the grounds of architectural differences and price.
 The ATMEGA, being an 8 bit microcontroller with no MAC instruction or DMA, would
 not be sufficient to fulfill the requirement for an FFT calculation. If this was
 not required by the target application, this would be an interesting choice.
-
-% TODO : verify these (how many DMA channels?)
-The CC2530 does include a DMA channel, but no MAC instruction. It is however
+The CC2530 does include a 5-channel DMA , but no MAC instruction. It is however
 more expensive than the STM32W108. 
 
 \section{Microcontroller}
 
-% TODO
-A few words on the STM32, what is specific about it, talk about the M3 core, the
-instruction set, cpu clock
+The chosen microcontroller, the STM32W108 system on chip, is based on a ARM
+Cortex M3 core, a 32-bit architecture that is licensed out to many different
+chip manufacturers. The chip uses the Thumb-2 instruction set, and can be
+programmed in C using the gcc-arm compiler. Open source code and compilers are
+readily available for this platform. However, the radio frequency section of the
+design is not documented, and subject to a non-disclosure agreement. All
+interactions with the radio layer of the device must go through the pre-compiled
+software library provided by the manufacturer.
 
 The STM32W108 is a compromise : we put aside some more economical or more
 power-efficient architectures in favour of the additional processing power that
 was imposed by the project specifications.
-
 More complex applications may call for more processing power than this chip can
 provide. If this is the case, then a more powerful microcontroller would have to
 be added to the design, and the STM32W108 would be reduced to serving simply as

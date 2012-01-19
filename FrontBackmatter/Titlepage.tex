@@ -9,25 +9,50 @@
 
         \hfill
 
+        \begin{minipage}{\textwidth}
+          \begin{flushleft}
+            \includegraphics[width=5cm]{gfx/logo-epfl}  \\
+          \end{flushleft}
+        \end{minipage}
+
         \vfill
+
+
 
         \begingroup
             \color{Maroon}\spacedallcaps{\myTitle} \\ \bigskip
         \endgroup
 
-        \spacedlowsmallcaps{\myName}
+        \mySubtitle \\ \medskip   
+
+        %\spacedlowsmallcaps{\myName}
 
         \vfill
 
-        \includegraphics[width=12cm]{gfx/frontpage} \\ \medskip
+        \includegraphics[width=12cm]{gfx/frontpage} \\ \bigskip
 
-        \mySubtitle \\ \medskip   
+        %\mySubtitle \\ \medskip   
         %\myDegree \\
-        %\myDepartment \\                            
-        %\myFaculty \\
-        %\myUni \\ \bigskip
 
-        \myTime\ -- \myVersion
+        \begin{minipage}{0.59\textwidth}
+          \begin{flushleft}
+            \medskip
+            \textsc{\myName} \\
+            Professor : \textsc{\myProf} \\
+            Supervisor : \textsc{\mySupervisor} \\
+            \myFaculty -- \myDepartment                             
+          \end{flushleft}
+        \end{minipage}
+        \begin{minipage}{0.39\textwidth}
+          \begin{flushright}
+            \includegraphics[height=3cm]{gfx/my-photo}  \\
+          \end{flushright}
+        \end{minipage}\\[1.5cm]
+
+        \bigskip
+        
+
+        \myTime\ -- \myVersion \\ \bigskip
 
         \vfill                      
 

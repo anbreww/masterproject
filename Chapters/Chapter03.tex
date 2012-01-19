@@ -72,16 +72,16 @@ input capture interfaces.
 \subsection{Antenna Design}
 
 Radio frequency engineering, especially antenna design, is an area which
-requires a lot of expertise. The design of an antenna itself would be
-a sufficient topic for an entire Masters thesis by someone with experience in
-that area. In this case, neither the author nor his supervisor have extensive
+requires a lot of expertise. the performance of an antenna depends on the
+thickness of the PCB, the length and shape of the trace, the components chosen,
+even the way passive components are placed in the vicinity of the antenna area.
+In this case, neither the author nor his supervisor have extensive
 experience with antenna design. Attempts to get help from specialized labs
-% TODO : add ref here
-within EPFL were unsuccessful. In light of these facts, the information
-contained in this section should be considered from the point of view of amateur
-designers, seeking a way to use an antenna effectively, without any formal
-background in that topic. Data and observations made here are mostly qualitative
-and empirical.
+within EPFL, be it advice or access to test equipment, were unsuccessful. In
+light of these facts, the information contained in this section should be
+considered from the point of view of amateur designers, seeking a way to use an
+antenna effectively, without any formal background in that topic. Data and
+observations made here are mostly qualitative and empirical.
 
 \begin{figure}[htb]
   \begin{center}
@@ -284,6 +284,13 @@ FR-4 PCB, and used 0603 size components.
 
 \section{Version 2}\label{sec:v2}
 
+After the first version of the device was shown to be functioning as expected,
+the design was modified to occupy less board space and simplify the connectors.
+The serial connector and debug connector were removed and replaced by a two-row,
+\SI{2}{mm} pitch female connector. The audio amplifier components were removed,
+and the RF design was moved to make space for an RP-SMA connector for an
+external antenna.
+
 \begin{figure}[htb]
   \begin{center}
     \includegraphics[width=0.9\textwidth]{gfx/node-v2}
@@ -459,7 +466,16 @@ utility.\footnote{The ST-Link Utility can be downloaded from
 
 \subsection{Analog to Digital Converter}\label{sub:adc}
 
-TODO : include specs for ADC
+The I/O connector provides three inputs to the \ac{ADC}. This allows the device
+to measure up to three different analog signals concurrently. The ADC can be
+configured to compare any two channels, between one another, with the ground
+reference, or with a \SI{0.6}{V} or \SI{1.2}{V} reference.
+
+Sample rate can be configured up to \SI{6}{MHz}, and the ADC can be configured
+to transfer conversion results directly to memory through the \ac{DMA} channel.
+Complete specifications for the performance of the ADC module can be found in
+the datasheet, pages 197 and following.
+
 \section{Possible future improvements}
 
 If the goal is to minimize board size, there are a few straightforward

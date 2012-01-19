@@ -142,7 +142,7 @@ to give up as time was running out. For the following calculations, we will
 assume that it is possible to achieve the manufacturer's advertised consumption,
 and round it up to \SI{1}{\micro\ampere}.
 
-\subsubsection{Duty Cycle}
+\subsubsection{Duty Cycle}\label{sub2:duty-cycle}
 
 Using the consumption data mentioned above, we can determine which proportion of
 the time must be spent in sleep mode versus transmission mode to achieve a given
@@ -213,18 +213,49 @@ to control remote devices.
     \label{tab:harvest-results}
 \end{table}
 
-%TODO : this section
+One of the goals of this project was to determine whether it was possible for
+a small sensor device to survive on indoor solar power while providing mesh
+networking capabilities with a low data rate. 
 
-Show a few plots of the harvesting results, give some average values for various
-situations, and give some duty cycle estimates.
+Very shortly after the beginning of the project, Texas Instruments released
+the BQ25504\footnote{ \url{ http://www.ti.com/product/bq25504 }}, a new chip
+dedicated to harvesting energy, mainly from solar panels. Mathieu set out to
+design a PCB to test this chip using cheap easy to obtain solar panels.
 
-From this, give some concrete examples (i.e. for reading a temperature, it would
-take n microseconds to wake the device, take a reading, m millis to transmit,
-etc, since duty cycle is D, we can expect to transmit a temperature reading once
-every M minutes.)
+A summary of the results obtained from a month of energy harvesting can be found
+in \autoref{tab:harvest-results}\footnote{ More data, as well as some discussion
+of the results, can be found in this blog post : \url{
+http://www.limpkin.fr/index.php?post/2012/01/17/Indoor-solar-energy-harvesting\%3A-the-december-numbers
+}}
 
-Propose some alternatives in case we want a higher sample rate : wake the device
-to a slow mode, without RF, log to EEPROM and then send 10 readings at a time.
+These tests were done using solar panels attached to walls in different parts of
+the lab. As we can see, not all locations allow sufficient light to be
+collected (one device was placed inside a room illuminated with only artificial
+lighting, and no windows. In this case, the energy collected was lower than the
+energy lost through leakage.)
+
+These results were collecting during December, which is possibly one of the
+worst times for solar energy harvesting. The sun rises late and sets early,
+therefore illuminating the panels for a shorter time than the rest of the year.
+Use of artificial lighting is also somewhat reduced, as there is less activity
+during the winter holidays.
+
+From these results, we can assume that it is possible, given the right
+conditions, to collect on average over \SI{20}{\micro\watt} of power. Since the
+chip chosen for our application can operate on supply voltages down to
+\SI{2.1}{V}, this would translate to an average of \SI{10}{\micro\ampere}
+available for our application.
+
+Referring to the calculations in \autoref{sub2:duty-cycle}, this should allow us
+to run simple operations, such as taking periodic readings of a temperature or
+humidity sensor, sending commands to dim lights depending on ambient light, etc. 
+
+It is worth noting that the chip must not necessarily be fully powered on when
+it is not asleep. It may be preferable to wake the chip in a lower-powered mode,
+with a slower clock, to read sensors and perform calculations, and only wake the
+radio device when data has to be transmitted. We can also aggregate data from
+several readings, by recording them to an EEPROM for example, and send several
+readings at once, to save power.
 
 \subsection{RF Power}
 
@@ -434,12 +465,37 @@ external antenna has similar results at \SI{2}{m} as the standard device at
 
 \subsection{RF Range}
 
-Take possibly the best performing device from the previous tests (hopefully the
-one with the ducky antenna), and then see how far I can get with the test
-modules in various situations. Perhaps test in a corridor with a double
-decameter.
+To add to the comparison of emission power, two modules were taken from the
+previous test to evaluate transmission range outdoors. We chose to compare the
+best performing device using the reference design (the RFC-Mote) against version
+2 of our design, using the external antenna.
 
+\begin{table}[h]
+  \myfloatalign
+  \begin{tabularx}{0.6\textwidth}{X c}
+    \toprule
+    \tableheadline{Module Tested}
+    & \tableheadline{Range}
+    \\ \midrule
+    v2 with external antenna  & \SI{41}{m}  \\
+    rfc-mote                  & \SI{17}{m}  \\
+    \bottomrule
+    \end{tabularx}
+    \caption[Range test results]{Range test results}
+    \label{tab:range-results}
+\end{table}
 
+The emitter module was placed on an elevated platform (\SI{1}{m} height),
+sending numbered packets periodically,  while the receiver (laptop with USB key
+from the development kit) was moved away from the emitter. The distance recorded
+in \autoref{tab:range-results} is the maximum distance reached while still
+receiving 100\% of packets.
+
+The observations made during this simple test as well as the output power
+comparison suggest that it is worth adding an external antenna where possible,
+as it has a dramatic effect on performance. Constantly powered router nodes,
+which would be connected to the mains power, would be a good candidate for an
+external antenna, if space permits.
 
 \section{Comparison Tests}
 
