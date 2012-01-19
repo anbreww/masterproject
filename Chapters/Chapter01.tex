@@ -22,8 +22,8 @@ this project.
 Home automation is still a growing industry which has not yet seen massive
 adoption. Low-powered sensor networks could play an important part in this
 market, providing features such as temperature and humidity readings around the
-house, measure light and activity to control lights and appliances, allow users
-to place remote controls in accessible places, and so on.
+house, measuring light and activity to control lights and appliances, allowing
+users to place remote controls in accessible places, and so on.
 
 Currently, the market is dominated by proprietary technologies such as ZigBee
 and Z-Wave, but new technologies are emerging, and it is not unlikely that one
@@ -38,7 +38,7 @@ ready-established solution. This project is an attempt to build a platform out
 of the best device from the ``snapshot'' of solutions available at the end of
 autumn 2011. Even during the fairly short span of this project, new devices were
 released which might be considered in the comparison that was made in the first
-month of this work.
+month of this work, had they been available at that time.
 
 \section{Cahier des Charges}\label{sec:cdc}
 
@@ -46,7 +46,7 @@ We will begin with a brief description of the project's requirements. These are
 the guidelines that were set forth at the beginning of the project. This list of
 items should cover the needs of a basic sensor network for indoor use. This
 section only provides an overview of the various subjects that will need to be
-covered. Each one will be looked at more in detail later in this document.
+covered, as each one will be looked at more in detail later in this document.
 
 \begin{itemize}
   \item \emph{Low production cost} :
@@ -58,7 +58,7 @@ covered. Each one will be looked at more in detail later in this document.
     wireless modules must be able to run for a very long time on a single
     charge. We shall also attempt to verify whether it is possible for the
     device to run using only indoor solar power.  Power consumption will be
-    covered in \autoref{sec:power}.
+    introduced in \autoref{sec:power} and detailed in later sections.
   \item \emph{Bidirectional RF} : 
     in order to work as a network, all devices must be able to communicate both
     way. This will allow at the very least for an end device to acknowledge
@@ -113,14 +113,14 @@ up periodically. We are hoping for power consumption below
 tests will be run, logging the amount of power that can be harvested from indoor
 illumination using small and cheap solar panels.
 
-In spite of these observations, these modules were primarily targeted towards
-audio processing applications. The project specifications demanded that at least
-one amplifier be present on one of the analog inputs. These components demand
-a certain current to function. As an example, the MAX4466 micropower
-preamplifier, included in the early revisions of the design, consumes
-\SI{24}{\micro\ampere} constantly when enabled. This was taken to account when
-choosing the microcontroller for our application. More details follow in
-\autoref{sec:chips}.
+In spite of these observations, the initial specifications were primarily
+targeted towards audio processing applications. The project specifications
+demanded that at least one amplifier be present on one of the analog inputs.
+These components demand a certain current to function. As an example, the
+MAX4466 micropower preamplifier, included in the early revisions of the design,
+consumes \SI{24}{\micro\ampere} constantly when enabled. This was taken to
+account when choosing the microcontroller for our application. More details
+follow in \autoref{sec:chips}.
 
 Finally, not all nodes will necessarily be solar powered. In order to form
 a reliable network, some devices must act as ``routers''. In mesh networks such
