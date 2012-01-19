@@ -91,50 +91,105 @@ together in the previous chapter, we have noticed that the duty cycle between
 the system's idle time and transmission time has a larger impact on overall
 power consumption than the power savings between one chip or the other.
 
-\subsection{RF Components}
+\section{RF Components}
+
+The reference design lists recommended components for the RF path which are
+expensive, given the cost of the overall system. We had originally planned to
+source several alternative and less expensive components, and measure the
+frequency response of the system with different combinations of components. 
+
+The components considered are the balun and RF filter. \autoref{tab:baluns}
+shows a comparison of baluns, while \autoref{tab:filters} compares three
+possible choices for RF filters.
+
+\begin{table}[h]
+  \myfloatalign
+  \begin{tabularx}{\textwidth}{X X c}
+    \toprule
+    \tableheadline{Digikey part \#}
+    & \tableheadline{Manufacturer}
+    & \tableheadline{Price}
+    \\ \midrule
+    732-2230-1-ND & Würth Elektronik &  \$ 1.83 \\
+    445-3985-1-ND & TDK  & \$ 1.03  \\
+    712-1045-1-ND & Johanson & \$ 0.54 \\
+    712-1041-1-ND & Johanson & \$ 0.33 \\
+    \bottomrule
+    \end{tabularx}
+    \caption[RF Baluns]{RF Baluns}
+    \label{tab:baluns}
+\end{table}
+
+The first component in \autoref{tab:filters} is the recommended component. It
+was not available from the usual online retailers (Digi-key, Farnell, Mouser,
+\ldots) and had to be sampled from the manufacturer. The price is unknown as it
+is not listed on the manufacturer's website.
+
+\begin{table}[h]
+  \myfloatalign
+  \begin{tabularx}{\textwidth}{p{2.6cm} p{2.6cm} X X}
+    \toprule
+    \tableheadline{Digikey part \#}
+    & \tableheadline{Manufacturer}
+    & \tableheadline{Insertion loss}
+    & \tableheadline{Price}
+    \\ \midrule
+    748 421 245* & Würth Elek. & 2.5dB  & \$ - \\
+    712-1089-1-ND & Johanson & 1.5dB & \$ 0.48 \\
+    712-1092-1-ND & Johanson & 1.2dB & \$ 0.59 \\
+    \bottomrule
+    \end{tabularx}
+    \caption[RF Filters]{RF Filters}
+    \label{tab:filters}
+\end{table}
+
+The above tables indicate that it is possible to save a significant amount of
+money by using alternative components, as well as improve the performance : some
+alternative RF filters offer a lower insertion loss.
+
+However, since the expected variations are quite low (around
+\SIrange{1}{2}{dB}), a comparison like this would necessitate better test
+equipment than we had at our disposal, as well as a controlled test environment
+to ensure the repeatability of our results. We believe the results of this
+comparison would be interesting, if only to show that the difference in
+performance may not warrant such a large price difference.
 
 
+\section{Conclusion}
 
-TODO : explain how we should do this, with proper test equipment
-List recommended components and their BOM price. Compare those with some lower
-priced examples (and compare their datasheet specs, like insertion loss). Then
-replace those in a design and then run a power test on them, in similar
-operating conditions.
+Overall, the design developed throughout this project has met the requirements
+that were given in the beginning, and has resulted in a functional prototype
+which could be used in a wide variety of projects. As a result of the way this
+project was structured, the end result is mostly a proof of concept, which is
+not necessarily very interesting on a functional level.
 
-% TODO : find a place to talk about this.
-RF Components : Some components have a very high influence on the
-    total cost of the device. We shall test alternatives to the recommended
-    components to determine if we can lower the cost without compromising
-    performance.
+If this project were to be developed further, and to make it more appealing, the
+first step would be to create some add-on modules to plug in to the expansion
+port. This was not part of the plan for the project, but it would be interesting
+to develop a small family of devices that can communicate together and perform
+various functions, react to user input, gather sensor data, control devices
+remotely, etc.
 
+Considering the size of the device and the connector, this approach can be quite
+wasteful both in size and financially. Once a module has been developed that
+fulfills a given function, both the functionality of the module and the RF
+section could be integrated into the same PCB design, resulting in one compact
+application-specific device.
 
+Another particularity to be noted about this device is that it is somewhat
+backwards from the ``usual'' way of doing things. In most cases, one would
+develop a solution to perform a given function, then add a module that provides
+wireless connectivity. In this case, we are doing the opposite : the main
+processor is part of the RF module, and additional functionality is to be
+provided as a module. 
 
-
-\section{Design Issues}
-
-Talk about the design itself. Problem with this project is that it's only
-produced a proof of concept device. It would be more interesting to have a whole
-family of devices that can perform various functions, gather sensor data etc.
-
-If this project were to be developed further, the first step would be to create
-some add-on modules to be connected to the expansion port. This however is quite
-wasteful in space and monies (connectors are expensive, and the current choice
-is quite large). Ideally, once a device has been developed and tested
-satisfactorily, the add-on module should be incorporated onto one PCB with the
-transmitter and become a standalone module with one specific application.
-
-Also, note that this way of doing things (since we're using a SoC) is a little
-bit backwards from the way things tend to be done : the ``base unit'' is just
-a chip with an antenna, and we plug modules into it to add functionality.
-Usually, you would build a platform for one or more applications, and then strap
-the RF device to it to add RF functionality, not make it the core of the
-application.
-
-Of course, there's nothing to prevent us from doing that : i.e. developing
-a 6LoWPAN XBee clone (personal project for my future!) but it's probably going
-to be more expensive than necessary!
-
-\bigskip
+Naturally, there is nothing to prevent this module from being reworked into
+a device that would offer wireless connectivity as an add-on, much like XBee
+devices from Digi. Given the impending popularisation of IPv6\footnote{Many
+large internet companies will be turning on IPv6 support for good on June 6\th
+2012 : \url{ http://www.worldipv6launch.org/}.}, an XBee-like device providing
+     6LoWPAN connectivity is likely to be quite successful in the near future.
+\\[1.5cm]
  
 \noindent\textit{\myLocation, \myTime}
 
